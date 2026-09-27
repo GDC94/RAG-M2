@@ -1,0 +1,21 @@
+[project]
+name = "rag-m2"
+version = "0.1.0"
+description = "RAG autocontenido sobre el manual interno de Alba People"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "openai==3.19.2",
+    "chromadb==1.5.9",
+    "tiktoken==0.14.0",
+    "pydantic==2.13.5",
+    "python-dotenv==1.2.3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.1.1",
+]
+
+[tool.uv]
+package = false

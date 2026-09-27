@@ -12,6 +12,16 @@ Estado: fase 0 (estructura y dependencias). El plan completo está en `plan.md`.
 
 ## Instalación
 
+Con `uv` (recomendado; usa `uv.lock` para fijar todas las dependencias):
+
+```bash
+uv sync
+cp .env.example .env   # completar OPENAI_API_KEY
+uv run python src/query.py "¿Cómo solicito vacaciones?"
+```
+
+Con `pip` (solo Python 3.14 y `requirements.txt`):
+
 ```bash
 python3.14 -m venv .venv
 source .venv/bin/activate
