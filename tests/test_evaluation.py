@@ -250,7 +250,9 @@ def test_judge_returns_evaluation_and_calls_judge_model() -> None:
 
 
 def test_judge_without_judge_model_raises_config_error() -> None:
-    settings = load_settings({"OPENAI_API_KEY": "sk-test"})
+    settings = load_settings({"OPENAI_API_KEY": "sk-test"}).model_copy(
+        update={"judge_model": None}
+    )
     response = QueryResponse(
         user_question="q",
         system_answer="a",
@@ -269,7 +271,11 @@ def test_judge_gold_set_scores_positives_and_negatives(
     chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk]
 ) -> None:
     settings = load_settings(
-        {"OPENAI_API_KEY": "sk-test", "RAG_JUDGE_MODEL": "judge-model"}
+        {
+            "OPENAI_API_KEY": "sk-test",
+            "RAG_JUDGE_MODEL": "judge-model",
+            "RAG_VERIFY_ANSWER": "false",
+        }
     )
     collection_name = f"idx-{uuid4().hex}"
     index = ChunkIndex.open(chroma_client, collection_name, settings.embedding_model)

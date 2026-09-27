@@ -16,7 +16,7 @@ def test_main_recall_fails_fast_on_missing_config(
     assert payload["error"]["code"] == "config_error"
 
 
-def test_main_judge_fails_fast_on_missing_judge_model(
+def test_main_judge_fails_fast_on_empty_index(
     capsys: pytest.CaptureFixture[str], tmp_path
 ) -> None:
     exit_code = evaluate.main(
@@ -27,4 +27,4 @@ def test_main_judge_fails_fast_on_missing_judge_model(
     assert exit_code == 1
     captured = capsys.readouterr()
     payload = json.loads(captured.out)
-    assert payload["error"]["code"] == "config_error"
+    assert payload["error"]["code"] == "index_empty"

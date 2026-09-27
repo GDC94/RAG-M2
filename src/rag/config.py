@@ -22,8 +22,8 @@ class Settings(BaseModel):
     max_chunk_tokens: int = Field(default=800, gt=0)
     chunk_overlap_ratio: float = Field(default=0.15, ge=0, lt=1)
     max_question_chars: int = Field(default=1000, gt=0)
-    judge_model: str | None = None
-    verify_answer: bool = False
+    judge_model: str | None = "gpt-4.1-mini"
+    verify_answer: bool = True
     debug: bool = False
 
 

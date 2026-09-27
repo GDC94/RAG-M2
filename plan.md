@@ -109,9 +109,9 @@ El prompt es una instrucción, no un control. Los controles son el umbral (sin c
 
 ### 4.5 Verificador de salida y juez
 
-- **Verificador (inline, opcional, apagado por defecto).** Después de generar, un segundo modelo (`RAG_JUDGE_MODEL`, distinto de `OPENAI_MODEL`) recibe pregunta, chunks y respuesta y devuelve `supported`, `unsupported`, `incomplete` o `wrong_status` con un motivo. Si es `unsupported` o `wrong_status`, la respuesta se reemplaza por escalamiento. Se enciende con `RAG_VERIFY_ANSWER=true`, y solo por defecto si el experimento de la sección 8 lo justifica.
-- **Juez (offline, bonus).** Recibe `user_question`, `system_answer` y `chunks_related` y devuelve `score` 0–10 con justificación sobre relevancia de los chunks, precisión y completitud. Corre sobre toda la lista de examen; la nota media se reporta en el README. Usa el mismo `RAG_JUDGE_MODEL`.
-- Un modelo distinto reduce errores correlacionados, pero sigue siendo un modelo. Su aporte se mide, no se asume.
+- **Verificador (inline, encendido por defecto desde el 2026-09-27).** Después de generar, un segundo modelo (`RAG_JUDGE_MODEL`, por defecto `gpt-4.1-mini`, distinto de `OPENAI_MODEL`) recibe pregunta, chunks y respuesta y devuelve `supported`, `unsupported`, `incomplete` o `wrong_status` con un motivo. Si es `unsupported` o `wrong_status`, la respuesta se reemplaza por escalamiento y el JSON lo muestra en el campo `verification`. Se apaga con `RAG_VERIFY_ANSWER=false`. Decisión tomada con el experimento de la fase 9: sobre la lista de examen, el verificador atrapó un error real (p19: la respuesta decía "Auditoría" y el manual dice Administración de Nómina) que ni el umbral ni el `status` ni el juez detectaron; costo medido: de 1,3 s a 2,3 s por pregunta dentro del pipeline y ~2 centavos más por cada corrida de 34 preguntas. Riesgo aceptado: en una de dos corridas también rechazó una respuesta defendible (p13); el error barato es mostrar un escalamiento de más. Evidencia en `outputs/judge_report_verify_off.json` y `outputs/judge_report_verify_on.json`.
+- **Juez (offline, bonus).** Recibe `user_question`, `system_answer` y `chunks_related` y devuelve `score` 0–10 con justificación sobre relevancia de los chunks, precisión y completitud. Corre sobre toda la lista de examen con `python src/evaluate.py judge`; la nota media, separada en positivas y negativas, se reporta en el README. Usa el mismo `RAG_JUDGE_MODEL`. Medido el 2026-09-27: media 9,96 en positivas y 10 en negativas, 8 de 8 negativas con `status` correcto. Limitación observada: el juez es indulgente; puntuó 10 una respuesta incorrecta (p19). Su nota sirve para comparar versiones, no como verdad. La rúbrica indica que abstenerse es correcto fuera del manual; sin esa indicación daba 0 a abstenciones correctas.
+- Un modelo distinto reduce errores correlacionados, pero sigue siendo un modelo. Su aporte se mide, no se asume, y varía entre corridas aun con temperatura 0.
 - Descartado: guardia de entrada con LLM. El umbral de retrieval ya cumple ese papel sin costo extra.
 
 ### 4.6 Errores y límites
@@ -311,12 +311,12 @@ RAG_COLLECTION_NAME=alba-manual
 RAG_MAX_CHUNK_TOKENS=800
 RAG_CHUNK_OVERLAP_RATIO=0.15
 RAG_MAX_QUESTION_CHARS=1000
-RAG_JUDGE_MODEL=
-RAG_VERIFY_ANSWER=false
+RAG_JUDGE_MODEL=gpt-4.1-mini
+RAG_VERIFY_ANSWER=true
 RAG_DEBUG=false
 ```
 
-`RAG_TOP_K` y `RAG_SIMILARITY_THRESHOLD` quedaron calibrados en la fase 8 (ver 4.3). `RAG_JUDGE_MODEL` se fija en el incremento 4. `data/chromadb` y `.env` quedan en `.gitignore`.
+`RAG_TOP_K` y `RAG_SIMILARITY_THRESHOLD` quedaron calibrados en la fase 8 (ver 4.3). `RAG_JUDGE_MODEL` y `RAG_VERIFY_ANSWER` quedaron fijados en la fase 9 (ver 4.5). `data/chromadb` y `.env` quedan en `.gitignore`.
 
 ## 13. Verificación: qué demuestra cada mecanismo
 

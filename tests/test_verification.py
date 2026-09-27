@@ -41,7 +41,9 @@ def test_verify_returns_supported_verdict_and_calls_judge_model(
 def test_verify_without_judge_model_raises_config_error_and_makes_no_call(
     make_chunk,
 ) -> None:
-    settings = load_settings({"OPENAI_API_KEY": "sk-test"})
+    settings = load_settings({"OPENAI_API_KEY": "sk-test"}).model_copy(
+        update={"judge_model": None}
+    )
     retrieved = _retrieved(make_chunk)
     answer = Answer(status="answered", text="Desde Ausencias.", sources=[])
     chat_client = FakeChatClient(VerifierOutput(label="supported", reason="ok"))

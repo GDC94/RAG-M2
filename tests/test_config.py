@@ -19,8 +19,8 @@ def test_load_settings_applies_defaults_when_optional_vars_missing():
     assert settings.max_chunk_tokens == 800
     assert settings.chunk_overlap_ratio == 0.15
     assert settings.max_question_chars == 1000
-    assert settings.judge_model is None
-    assert settings.verify_answer is False
+    assert settings.judge_model == "gpt-4.1-mini"
+    assert settings.verify_answer is True
     assert settings.debug is False
 
 
@@ -63,4 +63,4 @@ def test_empty_string_variable_counts_as_unset():
     )
 
     assert settings.top_k == 3
-    assert settings.judge_model is None
+    assert settings.judge_model == "gpt-4.1-mini"

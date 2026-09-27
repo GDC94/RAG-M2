@@ -105,7 +105,9 @@ def test_answer_question_rejects_question_over_max_chars_without_embedding_calls
 def test_answer_question_returns_answered_response_with_related_chunks(
     chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk]
 ) -> None:
-    settings = load_settings({"OPENAI_API_KEY": "sk-test"})
+    settings = load_settings(
+        {"OPENAI_API_KEY": "sk-test", "RAG_VERIFY_ANSWER": "false"}
+    )
     collection_name = str(uuid.uuid4())
     index = ChunkIndex.open(chroma_client, collection_name, settings.embedding_model)
     chunk = make_chunk(19).model_copy(
@@ -260,7 +262,9 @@ def test_answer_question_keeps_answer_when_verdict_is_supported(
 def test_answer_question_skips_verification_when_disabled(
     chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk]
 ) -> None:
-    settings = load_settings({"OPENAI_API_KEY": "sk-test"})
+    settings = load_settings(
+        {"OPENAI_API_KEY": "sk-test", "RAG_VERIFY_ANSWER": "false"}
+    )
     index = _index_with_vacation_chunk(chroma_client, make_chunk, settings.embedding_model)
     embeddings_client = FakeEmbeddingsClient(fixed_vector=[0.9, 0.1, 0.0, 0.0])
     chat_client = FakeSequenceChatClient(
@@ -278,3 +282,29 @@ def test_answer_question_skips_verification_when_disabled(
 
     assert response.verification is None
     assert len(chat_client.calls) == 1
+
+
+def test_answer_question_verifies_by_default_with_default_judge_model(
+    chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk]
+) -> None:
+    settings = load_settings({"OPENAI_API_KEY": "sk-test"})
+    index = _index_with_vacation_chunk(chroma_client, make_chunk, settings.embedding_model)
+    embeddings_client = FakeEmbeddingsClient(fixed_vector=[0.9, 0.1, 0.0, 0.0])
+    chat_client = FakeSequenceChatClient(
+        [
+            GroundedAnswer(
+                status="answered",
+                text="Desde Ausencias.",
+                sources=["19. Cómo solicitar vacaciones"],
+            ),
+            VerifierOutput(label="supported", reason="ok"),
+        ]
+    )
+    client = FakeRagClient(embeddings_client, chat_client)
+
+    response = answer_question("¿Cómo solicito vacaciones?", settings, client, index)
+
+    assert response.verification is not None
+    assert response.verification.label == "supported"
+    assert len(chat_client.calls) == 2
+    assert chat_client.calls[1]["model"] == "gpt-4.1-mini"
