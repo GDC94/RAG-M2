@@ -1,12 +1,96 @@
 import json
+import time
 from pathlib import Path
 from typing import Any
 
-from pydantic import ValidationError
+import tiktoken
+from pydantic import BaseModel, ValidationError
 
+from rag.client import provider_call
+from rag.config import Settings
 from rag.embeddings import embed_texts
+from rag.errors import ConfigError, ProviderError
+from rag.generation import SYSTEM_PROMPT
 from rag.index import ChunkIndex
-from rag.models import CaseResult, GoldSet, NegativeResult, RecallReport, SweepRow
+from rag.models import (
+    AnswerStatus,
+    CaseResult,
+    Evaluation,
+    GoldSet,
+    JudgedCase,
+    JudgeReport,
+    NegativeResult,
+    QueryResponse,
+    RecallReport,
+    SweepRow,
+)
+from rag.pipeline import answer_question
+
+_encoder: tiktoken.Encoding | None = None
+
+
+def _get_encoder() -> tiktoken.Encoding:
+    global _encoder
+    if _encoder is None:
+        _encoder = tiktoken.get_encoding("cl100k_base")
+    return _encoder
+
+
+def estimate_tokens(texts: list[str]) -> int:
+    """Estimate the token count of the concatenation of `texts`."""
+    return len(_get_encoder().encode("\n".join(texts)))
+
+JUDGE_PROMPT = """Sos el juez de calidad del equipo de soporte. Recibís la pregunta del
+usuario, la respuesta del sistema y los fragmentos relacionados que se
+usaron para responder.
+
+Evaluá la respuesta con un puntaje de 0 a 10 según:
+- relevancia de los fragmentos para la pregunta;
+- precisión: fidelidad de la respuesta a los fragmentos, sin datos
+  inventados;
+- completitud: cubre lo que la pregunta necesita.
+
+0 significa que la respuesta es incorrecta o inventada; 10 significa que
+es completa, precisa y bien respaldada por los fragmentos.
+
+Devolvé un score entero de 0 a 10 y una justificación breve."""
+
+
+class JudgeOutput(BaseModel):
+    score: int
+    justification: str
+
+
+def judge(client: Any, settings: Settings, response: QueryResponse) -> Evaluation:
+    """Ask the judge model to score a query response's quality."""
+    if settings.judge_model is None:
+        raise ConfigError("RAG_JUDGE_MODEL is required for the judge")
+
+    chunks_block = "\n\n".join(
+        f"[Fuente: {chunk.section_title}]\n{chunk.text}" for chunk in response.chunks_related
+    )
+    user_message = (
+        f"Pregunta del usuario:\n{response.user_question}\n\n"
+        f"Respuesta del sistema:\n{response.system_answer}\n\n"
+        f"Fragmentos relacionados:\n\n{chunks_block}"
+    )
+
+    with provider_call():
+        api_response = client.chat.completions.parse(
+            model=settings.judge_model,
+            temperature=0,
+            max_completion_tokens=settings.openai_max_output_tokens,
+            messages=[
+                {"role": "system", "content": JUDGE_PROMPT},
+                {"role": "user", "content": user_message},
+            ],
+            response_format=JudgeOutput,
+        )
+    parsed: JudgeOutput | None = api_response.choices[0].message.parsed
+    if parsed is None:
+        raise ProviderError("The judge model returned no structured evaluation")
+
+    return Evaluation(score=parsed.score, justification=parsed.justification)
 
 
 def load_gold_set(path: Path) -> GoldSet:
@@ -144,3 +228,95 @@ def sweep(
                 )
             )
     return rows
+
+
+def _judge_case(
+    *,
+    case_id: str,
+    category: str,
+    question: str,
+    expected_status: AnswerStatus | None,
+    settings: Settings,
+    client: Any,
+    index: ChunkIndex,
+) -> JudgedCase:
+    start = time.perf_counter()
+    response = answer_question(question, settings, client, index)
+    elapsed = time.perf_counter() - start
+    evaluation = judge(client, settings, response)
+
+    status_ok: bool | None = None
+    if expected_status is not None:
+        status_ok = response.status == expected_status
+
+    estimated_input_tokens = estimate_tokens(
+        [SYSTEM_PROMPT, question] + [chunk.text for chunk in response.chunks_related]
+    )
+    estimated_output_tokens = estimate_tokens([response.system_answer])
+
+    return JudgedCase(
+        id=case_id,
+        category=category,
+        question=question,
+        status=response.status,
+        expected_status=expected_status,
+        status_ok=status_ok,
+        score=evaluation.score,
+        justification=evaluation.justification,
+        sections=[chunk.section_title for chunk in response.chunks_related],
+        elapsed_seconds=elapsed,
+        estimated_input_tokens=estimated_input_tokens,
+        estimated_output_tokens=estimated_output_tokens,
+    )
+
+
+def judge_gold_set(
+    gold: GoldSet, settings: Settings, client: Any, index: ChunkIndex
+) -> JudgeReport:
+    """Answer and judge every gold-set question, positives and negatives alike."""
+    start = time.perf_counter()
+
+    cases: list[JudgedCase] = []
+    for positive in gold.positives:
+        cases.append(
+            _judge_case(
+                case_id=positive.id,
+                category=positive.category,
+                question=positive.question,
+                expected_status=None,
+                settings=settings,
+                client=client,
+                index=index,
+            )
+        )
+    for negative in gold.negatives:
+        cases.append(
+            _judge_case(
+                case_id=negative.id,
+                category=negative.category,
+                question=negative.question,
+                expected_status=negative.expected_status,
+                settings=settings,
+                client=client,
+                index=index,
+            )
+        )
+
+    total_elapsed_seconds = time.perf_counter() - start
+    total = len(cases)
+    mean_score = sum(case.score for case in cases) / total if total else 0.0
+    negatives_status_ok = sum(1 for case in cases if case.status_ok is True)
+
+    return JudgeReport(
+        judge_model=settings.judge_model or "",
+        answer_model=settings.openai_model,
+        verify_answer=settings.verify_answer,
+        total=total,
+        mean_score=mean_score,
+        negatives_total=len(gold.negatives),
+        negatives_status_ok=negatives_status_ok,
+        cases=cases,
+        total_elapsed_seconds=total_elapsed_seconds,
+        estimated_input_tokens=sum(case.estimated_input_tokens for case in cases),
+        estimated_output_tokens=sum(case.estimated_output_tokens for case in cases),
+    )

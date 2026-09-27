@@ -4,10 +4,11 @@ from typing import Any
 from rag.config import Settings
 from rag.embeddings import embed_texts
 from rag.errors import IndexEmptyError, InvalidQuestionError
-from rag.generation import generate
+from rag.generation import NOT_IN_MANUAL_TEXT, generate
 from rag.index import ChunkIndex
 from rag.ingestion import split_manual
-from rag.models import IndexReport, QueryResponse, RelatedChunk
+from rag.models import Answer, IndexReport, QueryResponse, RelatedChunk, Verdict
+from rag.verification import verify
 
 
 def build_index(
@@ -58,6 +59,12 @@ def answer_question(
     retrieved = index.search(vector, settings.top_k, settings.similarity_threshold)
     answer = generate(client, settings, cleaned, retrieved)
 
+    verdict: Verdict | None = None
+    if settings.verify_answer and retrieved:
+        verdict = verify(client, settings, cleaned, retrieved, answer)
+        if verdict.label in ("unsupported", "wrong_status"):
+            answer = Answer(status="not_in_manual", text=NOT_IN_MANUAL_TEXT, sources=[])
+
     chunks_related = [
         RelatedChunk(
             chunk_id=item.chunk.chunk_id,
@@ -75,4 +82,5 @@ def answer_question(
         system_answer=answer.text,
         chunks_related=chunks_related,
         status=answer.status,
+        verification=verdict,
     )

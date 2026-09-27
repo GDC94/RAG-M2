@@ -6,11 +6,17 @@ import pytest
 
 from rag.config import load_settings
 from rag.errors import IndexEmptyError, InvalidQuestionError
-from rag.generation import GroundedAnswer
+from rag.generation import NOT_IN_MANUAL_TEXT, GroundedAnswer
 from rag.index import ChunkIndex
 from rag.models import Chunk
 from rag.pipeline import answer_question, build_index
-from tests.conftest import FakeChatClient, FakeEmbeddingsClient, FakeRagClient
+from rag.verification import VerifierOutput
+from tests.conftest import (
+    FakeChatClient,
+    FakeEmbeddingsClient,
+    FakeRagClient,
+    FakeSequenceChatClient,
+)
 
 _MANUAL_TEXT = (
     "Alba Manual\n"
@@ -129,7 +135,9 @@ def test_answer_question_returns_answered_response_with_related_chunks(
         "system_answer",
         "chunks_related",
         "status",
+        "verification",
     ]
+    assert response.verification is None
 
 
 def test_answer_question_abstains_below_threshold_without_calling_chat(
@@ -167,3 +175,106 @@ def test_answer_question_rejects_empty_index_without_embedding_calls(
         answer_question("hola", settings, fake_embeddings_client, index)
 
     assert fake_embeddings_client.calls == 0
+
+
+def _index_with_vacation_chunk(
+    chroma_client: chromadb.ClientAPI,
+    make_chunk_fn: Callable[..., Chunk],
+    embedding_model: str,
+) -> ChunkIndex:
+    collection_name = str(uuid.uuid4())
+    index = ChunkIndex.open(chroma_client, collection_name, embedding_model)
+    chunk = make_chunk_fn(19).model_copy(
+        update={"section_title": "19. Cómo solicitar vacaciones"}
+    )
+    index.upsert([chunk], [[1.0, 0.0, 0.0, 0.0]])
+    return index
+
+
+def test_answer_question_replaces_unsupported_answer_with_not_in_manual(
+    chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk]
+) -> None:
+    settings = load_settings(
+        {
+            "OPENAI_API_KEY": "sk-test",
+            "RAG_VERIFY_ANSWER": "true",
+            "RAG_JUDGE_MODEL": "judge-model",
+        }
+    )
+    index = _index_with_vacation_chunk(chroma_client, make_chunk, settings.embedding_model)
+    embeddings_client = FakeEmbeddingsClient(fixed_vector=[0.9, 0.1, 0.0, 0.0])
+    chat_client = FakeSequenceChatClient(
+        [
+            GroundedAnswer(
+                status="answered",
+                text="Desde Ausencias.",
+                sources=["19. Cómo solicitar vacaciones"],
+            ),
+            VerifierOutput(label="unsupported", reason="cita inventada"),
+        ]
+    )
+    client = FakeRagClient(embeddings_client, chat_client)
+
+    response = answer_question("¿Cómo solicito vacaciones?", settings, client, index)
+
+    assert response.status == "not_in_manual"
+    assert response.system_answer == NOT_IN_MANUAL_TEXT
+    assert response.verification is not None
+    assert response.verification.label == "unsupported"
+    assert len(chat_client.calls) == 2
+    assert chat_client.calls[1]["model"] == "judge-model"
+
+
+def test_answer_question_keeps_answer_when_verdict_is_supported(
+    chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk]
+) -> None:
+    settings = load_settings(
+        {
+            "OPENAI_API_KEY": "sk-test",
+            "RAG_VERIFY_ANSWER": "true",
+            "RAG_JUDGE_MODEL": "judge-model",
+        }
+    )
+    index = _index_with_vacation_chunk(chroma_client, make_chunk, settings.embedding_model)
+    embeddings_client = FakeEmbeddingsClient(fixed_vector=[0.9, 0.1, 0.0, 0.0])
+    chat_client = FakeSequenceChatClient(
+        [
+            GroundedAnswer(
+                status="answered",
+                text="Desde Ausencias.",
+                sources=["19. Cómo solicitar vacaciones"],
+            ),
+            VerifierOutput(label="supported", reason="ok"),
+        ]
+    )
+    client = FakeRagClient(embeddings_client, chat_client)
+
+    response = answer_question("¿Cómo solicito vacaciones?", settings, client, index)
+
+    assert response.status == "answered"
+    assert response.system_answer == "Desde Ausencias."
+    assert response.verification is not None
+    assert response.verification.label == "supported"
+
+
+def test_answer_question_skips_verification_when_disabled(
+    chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk]
+) -> None:
+    settings = load_settings({"OPENAI_API_KEY": "sk-test"})
+    index = _index_with_vacation_chunk(chroma_client, make_chunk, settings.embedding_model)
+    embeddings_client = FakeEmbeddingsClient(fixed_vector=[0.9, 0.1, 0.0, 0.0])
+    chat_client = FakeSequenceChatClient(
+        [
+            GroundedAnswer(
+                status="answered",
+                text="Desde Ausencias.",
+                sources=["19. Cómo solicitar vacaciones"],
+            ),
+        ]
+    )
+    client = FakeRagClient(embeddings_client, chat_client)
+
+    response = answer_question("¿Cómo solicito vacaciones?", settings, client, index)
+
+    assert response.verification is None
+    assert len(chat_client.calls) == 1

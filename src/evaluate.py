@@ -12,8 +12,14 @@ from dotenv import load_dotenv
 
 from rag.client import create_client
 from rag.config import load_settings
-from rag.errors import RagError
-from rag.evaluation import embed_questions, evaluate_recall, load_gold_set, sweep
+from rag.errors import ConfigError, RagError
+from rag.evaluation import (
+    embed_questions,
+    evaluate_recall,
+    judge_gold_set,
+    load_gold_set,
+    sweep,
+)
 from rag.index import ChunkIndex
 from rag.models import GoldSet
 
@@ -53,6 +59,10 @@ def main(argv: list[str], environ: Mapping[str, str] | None = None) -> int:
         "--thresholds", default="0.30,0.35,0.40,0.45,0.50,0.55,0.60"
     )
 
+    judge_parser = subparsers.add_parser("judge")
+    judge_parser.add_argument("--gold", default="data/gold_set.json")
+    judge_parser.add_argument("--out", default=None)
+
     args = parser.parse_args(argv)
     command: str = str(args.command)
     gold_path: str = str(args.gold)
@@ -63,31 +73,44 @@ def main(argv: list[str], environ: Mapping[str, str] | None = None) -> int:
 
     try:
         settings = load_settings(environ)
+        if command == "judge" and settings.judge_model is None:
+            raise ConfigError(
+                "RAG_JUDGE_MODEL is required when RAG_VERIFY_ANSWER is true"
+            )
         client = create_client(settings)
         chroma = chromadb.PersistentClient(path=settings.db_path)
         index = ChunkIndex.open(chroma, settings.collection_name, settings.embedding_model)
         gold = _load_gold_set_or_raise(gold_path)
-        positive_vectors, negative_vectors = embed_questions(
-            client, settings.embedding_model, gold
-        )
 
-        if command == "recall":
-            report = evaluate_recall(
-                gold,
-                positive_vectors,
-                negative_vectors,
-                index,
-                settings.top_k,
-                settings.similarity_threshold,
-            )
-            print(report.model_dump_json(indent=2))
+        if command == "judge":
+            judge_report = judge_gold_set(gold, settings, client, index)
+            output = judge_report.model_dump_json(indent=2)
+            print(output)
+            out_path: str | None = args.out
+            if out_path:
+                Path(out_path).write_text(output, encoding="utf-8")
         else:
-            top_ks = _parse_int_list(str(args.top_k))
-            thresholds = _parse_float_list(str(args.thresholds))
-            rows = sweep(
-                gold, positive_vectors, negative_vectors, index, top_ks, thresholds
+            positive_vectors, negative_vectors = embed_questions(
+                client, settings.embedding_model, gold
             )
-            print(json.dumps([row.model_dump() for row in rows], indent=2))
+
+            if command == "recall":
+                report = evaluate_recall(
+                    gold,
+                    positive_vectors,
+                    negative_vectors,
+                    index,
+                    settings.top_k,
+                    settings.similarity_threshold,
+                )
+                print(report.model_dump_json(indent=2))
+            else:
+                top_ks = _parse_int_list(str(args.top_k))
+                thresholds = _parse_float_list(str(args.thresholds))
+                rows = sweep(
+                    gold, positive_vectors, negative_vectors, index, top_ks, thresholds
+                )
+                print(json.dumps([row.model_dump() for row in rows], indent=2))
     except RagError as exc:
         print(json.dumps(exc.to_json(), ensure_ascii=False), file=sys.stdout)
         return 1

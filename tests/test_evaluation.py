@@ -6,9 +6,26 @@ from uuid import uuid4
 import chromadb
 import pytest
 
-from rag.evaluation import evaluate_recall, load_gold_set, sweep
+from rag.config import load_settings
+from rag.errors import ConfigError
+from rag.evaluation import (
+    JUDGE_PROMPT,
+    JudgeOutput,
+    evaluate_recall,
+    judge,
+    judge_gold_set,
+    load_gold_set,
+    sweep,
+)
+from rag.generation import GroundedAnswer
 from rag.index import ChunkIndex
-from rag.models import Chunk, GoldNegative, GoldPositive, GoldSet
+from rag.models import Chunk, GoldNegative, GoldPositive, GoldSet, QueryResponse, RelatedChunk
+from tests.conftest import (
+    FakeChatClient,
+    FakeEmbeddingsClient,
+    FakeRagClient,
+    FakeSequenceChatClient,
+)
 
 
 def test_load_gold_set_returns_gold_set_with_positives_and_negatives(
@@ -195,3 +212,111 @@ def test_sweep_returns_a_row_per_top_k_and_threshold_pair(
     matching = [row for row in rows if row.top_k == 2 and row.threshold == 0.3]
     assert len(matching) == 1
     assert matching[0].recall == 1.0
+
+
+def test_judge_returns_evaluation_and_calls_judge_model() -> None:
+    settings = load_settings(
+        {"OPENAI_API_KEY": "sk-test", "RAG_JUDGE_MODEL": "judge-model"}
+    )
+    response = QueryResponse(
+        user_question="¿Cómo solicito vacaciones?",
+        system_answer="Desde Ausencias > Nueva solicitud.",
+        chunks_related=[
+            RelatedChunk(
+                chunk_id="alba-manual::19",
+                doc_id="alba-manual",
+                version="4.2",
+                section_title="19. Cómo solicitar vacaciones",
+                score=0.9,
+                text="Ingresá a Ausencias y creá una nueva solicitud.",
+            )
+        ],
+        status="answered",
+    )
+    chat_client = FakeChatClient(JudgeOutput(score=8, justification="bien"))
+
+    evaluation = judge(chat_client, settings, response)
+
+    assert evaluation.score == 8
+    assert evaluation.justification == "bien"
+    assert len(chat_client.calls) == 1
+    call = chat_client.calls[0]
+    assert call["model"] == "judge-model"
+    assert call["messages"][0]["content"] == JUDGE_PROMPT
+    user_message = call["messages"][1]["content"]
+    assert "¿Cómo solicito vacaciones?" in user_message
+    assert "Desde Ausencias > Nueva solicitud." in user_message
+    assert "19. Cómo solicitar vacaciones" in user_message
+
+
+def test_judge_without_judge_model_raises_config_error() -> None:
+    settings = load_settings({"OPENAI_API_KEY": "sk-test"})
+    response = QueryResponse(
+        user_question="q",
+        system_answer="a",
+        chunks_related=[],
+        status="not_in_manual",
+    )
+    chat_client = FakeChatClient(JudgeOutput(score=0, justification="n/a"))
+
+    with pytest.raises(ConfigError):
+        judge(chat_client, settings, response)
+
+    assert chat_client.calls == []
+
+
+def test_judge_gold_set_scores_positives_and_negatives(
+    chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk]
+) -> None:
+    settings = load_settings(
+        {"OPENAI_API_KEY": "sk-test", "RAG_JUDGE_MODEL": "judge-model"}
+    )
+    collection_name = f"idx-{uuid4().hex}"
+    index = ChunkIndex.open(chroma_client, collection_name, settings.embedding_model)
+    chunk = make_chunk(19).model_copy(
+        update={"section_title": "19. Cómo solicitar vacaciones"}
+    )
+    index.upsert([chunk], [[1.0, 0.0, 0.0, 0.0]])
+
+    gold = GoldSet(
+        positives=[
+            GoldPositive(
+                id="p01",
+                category="procedure",
+                question="¿Cómo pido vacaciones?",
+                expected_sections=["19. Cómo solicitar vacaciones"],
+            )
+        ],
+        negatives=[
+            GoldNegative(
+                id="n01",
+                category="out_of_domain",
+                question="¿Cómo hago una tarta?",
+                expected_status="not_in_manual",
+            )
+        ],
+    )
+
+    embeddings_client = FakeEmbeddingsClient(fixed_vector=[0.9, 0.1, 0.0, 0.0])
+    chat_client = FakeSequenceChatClient(
+        [
+            GroundedAnswer(
+                status="answered",
+                text="Desde Ausencias > Nueva solicitud.",
+                sources=["19. Cómo solicitar vacaciones"],
+            ),
+            JudgeOutput(score=9, justification="bien"),
+            GroundedAnswer(status="not_in_manual", text="x", sources=[]),
+            JudgeOutput(score=10, justification="perfecto"),
+        ]
+    )
+    client = FakeRagClient(embeddings_client, chat_client)
+
+    report = judge_gold_set(gold, settings, client, index)
+
+    assert report.total == 2
+    assert report.mean_score == 9.5
+    assert report.negatives_status_ok == 1
+    assert report.cases[0].status_ok is None
+    assert report.cases[1].status_ok is True
+    assert report.estimated_input_tokens > 0

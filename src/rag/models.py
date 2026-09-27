@@ -51,11 +51,20 @@ class RelatedChunk(BaseModel):
     text: str
 
 
+VerdictLabel = Literal["supported", "unsupported", "incomplete", "wrong_status"]
+
+
+class Verdict(BaseModel):
+    label: VerdictLabel
+    reason: str
+
+
 class QueryResponse(BaseModel):
     user_question: str
     system_answer: str
     chunks_related: list[RelatedChunk]
     status: AnswerStatus
+    verification: Verdict | None = None
 
 
 class GoldPositive(BaseModel):
@@ -112,3 +121,37 @@ class SweepRow(BaseModel):
     threshold: float
     recall: float
     negatives_gated: int
+
+
+class Evaluation(BaseModel):
+    score: int = Field(ge=0, le=10)
+    justification: str
+
+
+class JudgedCase(BaseModel):
+    id: str
+    category: str
+    question: str
+    status: AnswerStatus
+    expected_status: AnswerStatus | None
+    status_ok: bool | None
+    score: int
+    justification: str
+    sections: list[str]
+    elapsed_seconds: float
+    estimated_input_tokens: int
+    estimated_output_tokens: int
+
+
+class JudgeReport(BaseModel):
+    judge_model: str
+    answer_model: str
+    verify_answer: bool
+    total: int
+    mean_score: float
+    negatives_total: int
+    negatives_status_ok: int
+    cases: list[JudgedCase]
+    total_elapsed_seconds: float
+    estimated_input_tokens: int
+    estimated_output_tokens: int

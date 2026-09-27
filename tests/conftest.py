@@ -88,6 +88,29 @@ class FakeChatClient:
         return SimpleNamespace(choices=[SimpleNamespace(message=message)])
 
 
+class FakeSequenceChatClient:
+    """Duck-typed double of `chat.completions.parse` returning items in order.
+
+    Each call records its kwargs in `self.calls` and pops the next parsed
+    item from `parsed_items`, so a single fake can stand in for a sequence
+    of provider calls (e.g. generation followed by verification).
+    """
+
+    def __init__(self, parsed_items: list[Any]) -> None:
+        self.calls: list[dict[str, Any]] = []
+        self._parsed_items = list(parsed_items)
+        self.chat = self
+        self.completions = self
+
+    def parse(self, **kwargs: Any) -> SimpleNamespace:
+        self.calls.append(kwargs)
+        if not self._parsed_items:
+            raise AssertionError("no more fake responses")
+        parsed = self._parsed_items.pop(0)
+        message = SimpleNamespace(parsed=parsed, refusal=None)
+        return SimpleNamespace(choices=[SimpleNamespace(message=message)])
+
+
 class FakeRagClient:
     """Duck-typed double exposing both `.embeddings` and `.chat`, so a single
     object can serve as the client for both `embed_texts` and `generate`."""
