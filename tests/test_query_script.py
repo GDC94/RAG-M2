@@ -76,3 +76,21 @@ def test_main_without_pretty_still_prints_error_json(
     captured = capsys.readouterr()
     payload = json.loads(captured.out)
     assert payload["error"]["code"] == "index_empty"
+
+
+def test_main_with_debug_still_prints_clean_json_on_empty_index(
+    capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    environ = {
+        "OPENAI_API_KEY": "sk-test",
+        "RAG_DB_PATH": str(tmp_path / "db"),
+        "RAG_DEBUG": "true",
+        "RAG_VERIFY_ANSWER": "false",
+    }
+
+    exit_code = query.main(["hola"], environ=environ)
+
+    assert exit_code == 1
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+    assert payload["error"]["code"] == "index_empty"

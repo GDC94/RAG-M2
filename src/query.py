@@ -44,6 +44,9 @@ def main(
         chroma = chromadb.PersistentClient(path=settings.db_path)
         index = ChunkIndex.open(chroma, settings.collection_name, settings.embedding_model)
         response = answer_question(question, settings, client, index)
+        if settings.debug and response.timings:
+            for stage, seconds in response.timings.items():
+                print(f"stage={stage} seconds={seconds:.3f}", file=sys.stderr)
     except RagError as exc:
         if pretty:
             render_error(exc.to_json(), console)

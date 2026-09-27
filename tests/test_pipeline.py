@@ -138,6 +138,7 @@ def test_answer_question_returns_answered_response_with_related_chunks(
         "chunks_related",
         "status",
         "verification",
+        "timings",
     ]
     assert response.verification is None
 
@@ -308,3 +309,29 @@ def test_answer_question_verifies_by_default_with_default_judge_model(
     assert response.verification.label == "supported"
     assert len(chat_client.calls) == 2
     assert chat_client.calls[1]["model"] == "gpt-4.1-mini"
+
+
+def test_answer_question_returns_timings_for_each_stage(
+    chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk]
+) -> None:
+    settings = load_settings(
+        {"OPENAI_API_KEY": "sk-test", "RAG_VERIFY_ANSWER": "false"}
+    )
+    index = _index_with_vacation_chunk(chroma_client, make_chunk, settings.embedding_model)
+    embeddings_client = FakeEmbeddingsClient(fixed_vector=[0.9, 0.1, 0.0, 0.0])
+    chat_client = FakeChatClient(
+        GroundedAnswer(
+            status="answered",
+            text="Desde Ausencias.",
+            sources=["19. Cómo solicitar vacaciones"],
+        )
+    )
+    client = FakeRagClient(embeddings_client, chat_client)
+
+    response = answer_question("¿Cómo solicito vacaciones?", settings, client, index)
+
+    assert response.timings is not None
+    for key in ("embed", "search", "generate", "total"):
+        assert key in response.timings
+        assert response.timings[key] >= 0
+    assert "verify" not in response.timings

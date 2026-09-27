@@ -55,15 +55,35 @@ def answer_question(
     if index.count() == 0:
         raise IndexEmptyError("The index is empty; run build_index first")
 
+    total_start = time.perf_counter()
+
+    embed_start = time.perf_counter()
     vector = embed_texts(client, settings.embedding_model, [cleaned])[0]
+    embed_seconds = time.perf_counter() - embed_start
+
+    search_start = time.perf_counter()
     retrieved = index.search(vector, settings.top_k, settings.similarity_threshold)
+    search_seconds = time.perf_counter() - search_start
+
+    generate_start = time.perf_counter()
     answer = generate(client, settings, cleaned, retrieved)
+    generate_seconds = time.perf_counter() - generate_start
+
+    timings: dict[str, float] = {
+        "embed": embed_seconds,
+        "search": search_seconds,
+        "generate": generate_seconds,
+    }
 
     verdict: Verdict | None = None
     if settings.verify_answer and retrieved:
+        verify_start = time.perf_counter()
         verdict = verify(client, settings, cleaned, retrieved, answer)
+        timings["verify"] = time.perf_counter() - verify_start
         if verdict.label in ("unsupported", "wrong_status"):
             answer = Answer(status="not_in_manual", text=NOT_IN_MANUAL_TEXT, sources=[])
+
+    timings["total"] = time.perf_counter() - total_start
 
     chunks_related = [
         RelatedChunk(
@@ -83,4 +103,5 @@ def answer_question(
         chunks_related=chunks_related,
         status=answer.status,
         verification=verdict,
+        timings=timings,
     )

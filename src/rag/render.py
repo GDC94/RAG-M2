@@ -15,15 +15,28 @@ STATUS_STYLES: dict[str, str] = {
     "not_in_manual": "red",
 }
 
+VERDICT_STYLES: dict[str, str] = {
+    "supported": "green",
+    "incomplete": "yellow",
+    "unsupported": "red",
+    "wrong_status": "red",
+}
+
 
 def render_response(response: QueryResponse, console: Console) -> None:
     status_style = STATUS_STYLES.get(response.status, "white")
     # User-provided text is escaped so square brackets are never read as markup.
-    question_panel = Panel(
-        f"{escape(response.user_question)}\n"
+    lines = [
+        escape(response.user_question),
         f"Estado: [{status_style}]{response.status}[/{status_style}]",
-        title="Pregunta",
-    )
+    ]
+    if response.verification is not None:
+        verdict_style = VERDICT_STYLES.get(response.verification.label, "white")
+        lines.append(
+            f"Verificación: [{verdict_style}]{response.verification.label}"
+            f"[/{verdict_style}] — {escape(response.verification.reason)}"
+        )
+    question_panel = Panel("\n".join(lines), title="Pregunta")
     console.print(question_panel)
 
     answer_panel = Panel(escape(response.system_answer), title="Respuesta")

@@ -65,6 +65,7 @@ class QueryResponse(BaseModel):
     chunks_related: list[RelatedChunk]
     status: AnswerStatus
     verification: Verdict | None = None
+    timings: dict[str, float] | None = None
 
 
 class GoldPositive(BaseModel):

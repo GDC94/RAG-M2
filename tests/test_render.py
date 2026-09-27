@@ -2,15 +2,16 @@ import io
 
 from rich.console import Console
 
-from rag.models import QueryResponse, RelatedChunk
+from rag.models import QueryResponse, RelatedChunk, Verdict
 from rag.render import render_error, render_response
 
 
-def _make_response() -> QueryResponse:
+def _make_response(verification: Verdict | None = None) -> QueryResponse:
     return QueryResponse(
         user_question="Como configuro las vacaciones?",
         system_answer="Debes solicitarlas en el portal de RRHH.",
         status="answered",
+        verification=verification,
         chunks_related=[
             RelatedChunk(
                 chunk_id="alba-manual::1",
@@ -59,6 +60,32 @@ def test_render_response_truncates_long_chunk_text() -> None:
     output = buffer.getvalue()
     assert long_text[:40] in output
     assert long_text[-40:] not in output
+
+
+def test_render_response_shows_verification_verdict_when_present() -> None:
+    buffer = io.StringIO()
+    console = Console(file=buffer, width=100, force_terminal=False, color_system=None)
+    response = _make_response(
+        verification=Verdict(label="unsupported", reason="cita inventada")
+    )
+
+    render_response(response, console)
+
+    output = buffer.getvalue()
+    assert "Verificación" in output
+    assert "unsupported" in output
+    assert "cita inventada" in output
+
+
+def test_render_response_omits_verification_line_when_absent() -> None:
+    buffer = io.StringIO()
+    console = Console(file=buffer, width=100, force_terminal=False, color_system=None)
+    response = _make_response(verification=None)
+
+    render_response(response, console)
+
+    output = buffer.getvalue()
+    assert "Verificación" not in output
 
 
 def test_render_error_contains_code_and_message() -> None:
