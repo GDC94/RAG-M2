@@ -64,7 +64,7 @@ La versión del manual está en la línea 2: `Versión 4.2 — vigente desde el 
 ### 4.3 Retrieval: k-NN por coseno con umbral, calibrado
 
 - Se embebe la pregunta y se piden `RAG_TOP_K` vecinos; se descartan los que quedan bajo `RAG_SIMILARITY_THRESHOLD`. `score = 1 - distance`.
-- Los valores iniciales (4 y 0,3) son **supuestos** heredados. Los definitivos salen de la lista de examen (sección 6). El README los justifica con recall medido.
+- Valores **medidos** el 2026-09-27 con la lista de examen (sección 6): `RAG_TOP_K=3` y `RAG_SIMILARITY_THRESHOLD=0.42`. Con los valores heredados (4 y 0,3) el recall ya era 26/26, pero el umbral solo frenaba 2 de 8 negativas. El barrido mostró que el recall se mantiene en 1,0 para `top_k >= 2` hasta umbral 0,44, y que entre 0,40 y 0,44 se frenan 5 de 8 negativas (las tres fuera de dominio y las dos inyecciones). La positiva más floja puntúa 0,456 y la inyección más alta 0,386; 0,42 deja margen parejo a ambos lados. Ningún acierto pasó del segundo puesto, así que `top_k=3` deja un chunk de colchón. Evidencia en `outputs/recall_report_top4_thr030.json` y `outputs/threshold_sweep.json`. Las tres negativas que no se frenan (dos cupos de cliente y un tema no cubierto) puntúan 0,53–0,56 porque sí hablan del manual: las resuelve el `status`, medido en la fase 9.
 - Con 39 vectores, HNSW equivale a búsqueda exhaustiva. El README lo dice así; no vende aproximación como ventaja.
 - Búsqueda híbrida (léxica + vectorial): descartada por ahora. Se reconsidera solo si la lista de examen muestra fallos en preguntas con identificadores de pantalla (por ejemplo "Bandeja > Firmas pendientes").
 
@@ -304,8 +304,8 @@ OPENAI_MODEL=gpt-4o-mini
 OPENAI_TIMEOUT=30
 OPENAI_MAX_RETRIES=2
 OPENAI_MAX_OUTPUT_TOKENS=800
-RAG_TOP_K=4
-RAG_SIMILARITY_THRESHOLD=0.3
+RAG_TOP_K=3
+RAG_SIMILARITY_THRESHOLD=0.42
 RAG_DB_PATH=./data/chromadb
 RAG_COLLECTION_NAME=alba-manual
 RAG_MAX_CHUNK_TOKENS=800
@@ -316,7 +316,7 @@ RAG_VERIFY_ANSWER=false
 RAG_DEBUG=false
 ```
 
-`RAG_TOP_K` y `RAG_SIMILARITY_THRESHOLD` se actualizan tras la calibración del incremento 3. `RAG_JUDGE_MODEL` se fija en el incremento 4. `data/chromadb` y `.env` quedan en `.gitignore`.
+`RAG_TOP_K` y `RAG_SIMILARITY_THRESHOLD` quedaron calibrados en la fase 8 (ver 4.3). `RAG_JUDGE_MODEL` se fija en el incremento 4. `data/chromadb` y `.env` quedan en `.gitignore`.
 
 ## 13. Verificación: qué demuestra cada mecanismo
 

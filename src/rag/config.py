@@ -15,8 +15,8 @@ class Settings(BaseModel):
     openai_timeout: float = Field(default=30.0, gt=0)
     openai_max_retries: int = Field(default=2, ge=0)
     openai_max_output_tokens: int = Field(default=800, gt=0)
-    top_k: int = Field(default=4, gt=0)
-    similarity_threshold: float = Field(default=0.3, ge=0, le=1)
+    top_k: int = Field(default=3, gt=0)
+    similarity_threshold: float = Field(default=0.42, ge=0, le=1)
     db_path: str = "./data/chromadb"
     collection_name: str = "alba-manual"
     max_chunk_tokens: int = Field(default=800, gt=0)

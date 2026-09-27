@@ -12,8 +12,8 @@ def test_load_settings_applies_defaults_when_optional_vars_missing():
     assert settings.openai_timeout == 30.0
     assert settings.openai_max_retries == 2
     assert settings.openai_max_output_tokens == 800
-    assert settings.top_k == 4
-    assert settings.similarity_threshold == 0.3
+    assert settings.top_k == 3
+    assert settings.similarity_threshold == 0.42
     assert settings.db_path == "./data/chromadb"
     assert settings.collection_name == "alba-manual"
     assert settings.max_chunk_tokens == 800
@@ -62,5 +62,5 @@ def test_empty_string_variable_counts_as_unset():
         }
     )
 
-    assert settings.top_k == 4
+    assert settings.top_k == 3
     assert settings.judge_model is None
