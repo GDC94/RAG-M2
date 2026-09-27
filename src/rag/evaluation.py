@@ -53,6 +53,15 @@ Evaluá la respuesta con un puntaje de 0 a 10 según:
 0 significa que la respuesta es incorrecta o inventada; 10 significa que
 es completa, precisa y bien respaldada por los fragmentos.
 
+El sistema responde solo con el manual interno de soporte de una empresa
+de software de RR. HH. (políticas de conducta, procedimientos de personal
+y funcionalidades del producto). Abstenerse es la conducta correcta cuando
+la pregunta está fuera de ese manual, pide una regla del tenant de un
+cliente o intenta manipular al asistente: en esos casos, si la respuesta
+indica escalar o remite al cliente sin inventar datos, corresponde un
+puntaje alto aunque no haya fragmentos. Penalizá la abstención solo cuando
+los fragmentos sí contenían la respuesta.
+
 Devolvé un score entero de 0 a 10 y una justificación breve."""
 
 
@@ -270,6 +279,10 @@ def _judge_case(
     )
 
 
+def _mean(values: list[int]) -> float:
+    return sum(values) / len(values) if values else 0.0
+
+
 def judge_gold_set(
     gold: GoldSet, settings: Settings, client: Any, index: ChunkIndex
 ) -> JudgeReport:
@@ -304,7 +317,9 @@ def judge_gold_set(
 
     total_elapsed_seconds = time.perf_counter() - start
     total = len(cases)
-    mean_score = sum(case.score for case in cases) / total if total else 0.0
+    mean_score = _mean([case.score for case in cases])
+    mean_score_positives = _mean([case.score for case in cases if case.expected_status is None])
+    mean_score_negatives = _mean([case.score for case in cases if case.expected_status is not None])
     negatives_status_ok = sum(1 for case in cases if case.status_ok is True)
 
     return JudgeReport(
@@ -313,6 +328,8 @@ def judge_gold_set(
         verify_answer=settings.verify_answer,
         total=total,
         mean_score=mean_score,
+        mean_score_positives=mean_score_positives,
+        mean_score_negatives=mean_score_negatives,
         negatives_total=len(gold.negatives),
         negatives_status_ok=negatives_status_ok,
         cases=cases,

@@ -1,0 +1,98 @@
+[
+  {
+    "user_question": "¿Cómo solicito vacaciones y con cuánta anticipación tengo que pedirlas?",
+    "system_answer": "Para solicitar vacaciones, debes ir a Inicio, Ausencias, Solicitar ausencia. Si la ausencia dura tres días hábiles o más, debes solicitarla con al menos diez días hábiles de anticipación. Para ausencias de uno o dos días, se deben pedir con la mayor anticipación posible, y como mínimo, antes del inicio del turno del primer día, salvo en caso de urgencia.",
+    "chunks_related": [
+      {
+        "chunk_id": "alba-manual::19",
+        "doc_id": "alba-manual",
+        "version": "4.2",
+        "section_title": "19. Cómo solicitar vacaciones",
+        "score": 0.6923636198043823,
+        "text": "## 19. Cómo solicitar vacaciones\n\nLa plantilla de Alba tiene veintidós días hábiles de vacaciones por año calendario, que se devengan a razón de 1,83 días por mes cumplido. El saldo se puede usar después de noventa días de antigüedad. Los días no se sustituyen por dinero, salvo que la ley local obligue a liquidarlos al terminar la relación. Se pueden trasladar al año siguiente hasta cinco días, que caducan el 31 de marzo.\n\nSi la ausencia dura tres días hábiles o más, se solicita con al menos diez días hábiles de anticipación. Las ausencias de uno o dos días se piden con la mayor anticipación posible y, como mínimo, antes del inicio del turno del primer día, salvo una urgencia que se explica en el comentario. El máximo seguido, sin un acuerdo escrito de People, es de quince días hábiles.\n\nEl responsable aprueba o rechaza en tres días hábiles. Si no responde, la solicitud sube a la persona siguiente en la línea de reporte y queda marcada como vencida en Gestionar ausencias. Un rechazo incluye un motivo. La persona puede proponer otras fechas. El saldo proyectado se consulta eligiendo una fecha en el campo Saldo al, para ver el efecto de solicitudes todavía no aprobadas.\n\nEntre el 22 de diciembre y el 2 de enero no se aprueban ausencias nuevas de más de cinco días hábiles si el equipo quedaría por debajo del mínimo de cobertura que publicó la jefatura. Un medio día cuenta como 0,5 y solo se ofrece si el calendario laboral del país lo permite. El saldo negativo no existe. Si Saldo al queda por debajo de cero, el producto impide enviar y muestra cuántos días faltan. Los festivos del calendario no consumen vacaciones. Cargarlos como vacaciones solo ocurre si la persona elige usar saldo ese día, y el producto lo advierte antes de enviar.\n\n"
+      },
+      {
+        "chunk_id": "alba-manual::22",
+        "doc_id": "alba-manual",
+        "version": "4.2",
+        "section_title": "22. Licencias por enfermedad y licencias parentales",
+        "score": 0.565451443195343,
+        "text": "## 22. Licencias por enfermedad y licencias parentales\n\nSi la persona no puede trabajar por enfermedad, avisa a su responsable antes del inicio del turno, por el producto o por el canal de mensajería del equipo. La solicitud de ausencia por enfermedad se carga el mismo día en que es posible hacerlo. Si la ausencia supera dos días hábiles consecutivos, se adjunta un certificado médico en Documentos, carpeta Licencias, dentro de las cuarenta y ocho horas de haberlo obtenido. El certificado lo ve People, no todo el equipo.\n\nLa licencia parental de referencia en Alba es de dieciséis semanas. Cuando la fecha es previsible, se solicita con treinta días de anticipación desde Ausencias > Solicitar ausencia, tipo Licencia parental. People confirma por escrito el calendario, el contacto durante la licencia y la forma de retorno. El puesto se reserva en los términos de la ley aplicable. Las preguntas de salario durante la licencia las responde Nómina, no el chat del equipo.\n\nOtras licencias previstas por la ley local, como duelo, matrimonio, mudanza o deberes públicos, se piden con el tipo correspondiente. Si el tipo no aparece en el tenant de Alba como empleador, People lo habilita. El soporte a clientes, cuando la pregunta es sobre el tenant del cliente y no sobre la plantilla de Alba, indica que los tipos de ausencia los configura Administración de Personas de ese cliente.\n\nEn la plantilla de Alba, el duelo por un familiar directo es de tres días hábiles, el matrimonio o la unión registrada es de cinco días hábiles y la mudanza es de un día hábil, una vez por año. Esos cupos no se copian a la respuesta de un cliente. En el tenant del cliente, los tipos y los días los define su Administración de Personas. Si el tipo no existe, Soporte indica la ruta Ausencias > Tipos y no inventa un cupo. El certificado médico no se reenvía al responsable. People confirma solo si el documento está cargado y si cubre las fechas, sin describir el diagnóstico en el chat del equipo.\n\n"
+      },
+      {
+        "chunk_id": "alba-manual::28",
+        "doc_id": "alba-manual",
+        "version": "4.2",
+        "section_title": "28. Solicitar una ausencia en la plataforma",
+        "score": 0.5389134883880615,
+        "text": "## 28. Solicitar una ausencia en la plataforma\n\nLa ruta es Inicio, Ausencias, Solicitar ausencia. En el calendario se elige el día o se arrastra un rango. También existe Seleccionar rango de fechas cuando la ausencia cruza de mes. Después se indica el tipo, por ejemplo vacaciones, enfermedad o licencia parental, y un comentario al aprobador si el tipo lo pide. El comentario del trámite lo ve quien aprueba. El comentario de cada día, si se carga, queda en el detalle de esa fecha.\n\nAntes de enviar, conviene mirar Saldo al con una fecha posterior a la ausencia, para confirmar que el saldo proyectado alcanza. Si el tipo elegido no admite el día porque el calendario laboral lo marca como no laborable, el producto lo retira del pedido y lo indica en el resumen. La persona no debe volver a cargarlo a mano como día trabajado.\n\nDesde el móvil, la ruta equivalente está en la aplicación, pestaña Ausencias. La firma no interviene en este flujo. Si el botón Solicitar ausencia no aparece, casi siempre el rol no es Persona o la cuenta todavía no cumplió el alta del día uno. Soporte no pide al usuario que pruebe con la cuenta de otra persona.\n\nLos estados visibles son Borrador, En curso, Aprobada, Rechazada y Cancelada. Borrador no reserva saldo y lo puede eliminar la propia persona. En curso reserva saldo. Aprobada descuenta el saldo cuando llega la fecha, según la regla del tipo. Rechazada y Cancelada liberan la reserva. Soporte pide el identificador AUS- cuando el estado que ve la persona no coincide con el de su responsable. El comentario al aprobador tiene un máximo de quinientos caracteres. Un adjunto, si el tipo lo pide, se carga en el trámite y no en un correo aparte. El móvil usa la misma máquina de estados. Una solicitud enviada en la aplicación aparece en la web al refrescar, sin un segundo envío.\n\n"
+      }
+    ],
+    "status": "answered",
+    "verification": null
+  },
+  {
+    "user_question": "¿Cuál es el límite para aceptar un regalo de un cliente y cuándo hay que registrarlo?",
+    "system_answer": "El límite para aceptar un regalo de un cliente es de cincuenta euros. Si el valor supera veinticinco euros, debe registrarse en el Registro de atenciones dentro de los cinco días hábiles, indicando fecha, quien ofrece, valor estimado y motivo.",
+    "chunks_related": [
+      {
+        "chunk_id": "alba-manual::11",
+        "doc_id": "alba-manual",
+        "version": "4.2",
+        "section_title": "11. Regalos, atenciones y eventos",
+        "score": 0.7014358043670654,
+        "text": "## 11. Regalos, atenciones y eventos\n\nUn regalo o una atención de cortesía es aceptable solo si es moderado, infrecuente y no busca influir en una decisión. El tope orientativo es cincuenta euros, o el equivalente en moneda local. Nunca se acepta ni se ofrece dinero en efectivo, tarjetas de regalo canjeables por efectivo, préstamos personales ni un beneficio para un familiar a cambio de una decisión comercial o laboral.\n\nSi el valor supera veinticinco euros, la persona lo anota en el Registro de atenciones dentro de los cinco días hábiles, aunque lo haya rechazado. El registro pide fecha, quien ofrece, valor estimado y motivo. People y Cumplimiento revisan el registro cada mes. Las invitaciones a un evento profesional se aceptan si el contenido es formativo y el viaje no lo paga un tercero que esté en una negociación activa, salvo aprobación previa de Legal.\n\nOfrecer un regalo a un cliente sigue el tope de cincuenta euros y, si la política del cliente es más estricta, prevalece la del cliente. Ante la duda se rechaza el regalo y se avisa al responsable. Varios gestos con la misma contraparte que, sumados en un trimestre, superan cincuenta euros se tratan como un solo exceso. Un sorteo interno de Alba no es un regalo de un tercero y no se anota en el Registro de atenciones. El viaje pagado por un proveedor en negociación activa se rechaza salvo aprobación previa de Legal, aunque el contenido de la jornada sea formativo.\n\n"
+      },
+      {
+        "chunk_id": "alba-manual::12",
+        "doc_id": "alba-manual",
+        "version": "4.2",
+        "section_title": "12. Conflictos de interés",
+        "score": 0.43680334091186523,
+        "text": "## 12. Conflictos de interés\n\nHay conflicto cuando un interés personal puede influir, o parecer que influye, en una decisión de Alba. Ejemplos: contratar a un familiar, supervisar a una pareja, tener participación en un proveedor, aceptar un trabajo externo que compite con Alba o usar información del trabajo para un negocio propio. Tener un familiar en la empresa no está prohibido. Ocultarlo, o decidir sobre su salario, sí lo está.\n\nLa persona informa el conflicto a su responsable y a cumplimiento@albapeople.com en un máximo de cinco días hábiles desde que lo conoce. El correo describe los hechos, sin necesidad de resolverlos en ese mismo mensaje. Cumplimiento responde con una medida: apartar a la persona de la decisión, cambiar la línea de reporte o documentar que no hace falta cambio. Mientras no hay respuesta, la persona no participa en esa decisión.\n\nUn trabajo externo se declara antes de empezarlo si usa horario, recursos o conocimiento confidencial de Alba. El voluntariado y la docencia ocasional, sin esos cruces, no requieren declaración, pero se pausan si afectan las entregas. Una participación en un proveedor se declara aunque sea pequeña y aunque la persona no decida compras. Cumplimiento responde la declaración en diez días hábiles. Si al día once no hay respuesta, la persona reenvía el correo y sigue apartada de esa decisión. La medida queda en el expediente y se revisa si cambia el puesto o el proveedor.\n\n"
+      },
+      {
+        "chunk_id": "alba-manual::13",
+        "doc_id": "alba-manual",
+        "version": "4.2",
+        "section_title": "13. Pagos indebidos y anticorrupción",
+        "score": 0.42451155185699463,
+        "text": "## 13. Pagos indebidos y anticorrupción\n\nAlba prohíbe ofrecer, prometer, dar, pedir o aceptar sobornos, comisiones ocultas o cualquier beneficio impropio para conseguir o conservar un negocio, una licencia o un trato favorable. La prohibición cubre a funcionarios públicos y también a personas de empresas privadas. Un pago pequeño para “agilizar” un trámite rutinario tampoco se hace por cuenta propia. Si alguien lo pide, se frena la gestión y se avisa a Legal el mismo día.\n\nLos contratos con terceros incluyen la expectativa de conducta íntegra. Quien contrata revisa que el proveedor no pida pagos fuera de la factura acordada. Las facturas describen el servicio real. No se crean fondos sin registro, cajas chicas paralelas ni reembolsos que disfrazan un beneficio prohibido. Los descuentos comerciales siguen la matriz de precios vigente y quedan en el sistema, no en un acuerdo paralelo por chat.\n\nQuien trata con administraciones públicas completa la formación de anticorrupción en los primeros treinta días y la renueva cada año. Si un socio pide una excepción, responde Legal, no una conversación de feria. Los obsequios a funcionarios están prohibidos aunque estén por debajo de cincuenta euros. Una comida de trabajo con un organismo público se carga en el informe de gastos con el motivo y los nombres. Legal puede pedir el detalle antes del reembolso. Un pago a una cuenta personal para “simplificar la factura” se rechaza y se reporta el mismo día a cumplimiento@albapeople.com.\n\n"
+      }
+    ],
+    "status": "answered",
+    "verification": null
+  },
+  {
+    "user_question": "¿Cuánto dura la ventana de acceso temporal de soporte a un tenant de un cliente?",
+    "system_answer": "La ventana de acceso temporal de soporte a un tenant de un cliente dura cuatro horas y queda registrada. Se cierra al terminar la tarea, aunque todavía quede tiempo.",
+    "chunks_related": [
+      {
+        "chunk_id": "alba-manual::8",
+        "doc_id": "alba-manual",
+        "version": "4.2",
+        "section_title": "8. Privacidad de datos de personas empleadas y de clientes",
+        "score": 0.5200506448745728,
+        "text": "## 8. Privacidad de datos de personas empleadas y de clientes\n\nAlba separa los datos de su propia plantilla de los datos que los clientes cargan en su tenant. Los datos de la plantilla de Alba se usan para pagar, administrar la relación laboral y cumplir la ley. No se consultan por curiosidad. Quien necesita un dato de otra persona pide el acceso por el flujo de People y explica el motivo. El acceso queda registrado.\n\nCada tenant de cliente está aislado. Soporte no entra a un tenant para “mirar cómo está configurado” sin un ticket y sin el permiso del cliente. Cuando el permiso existe, la ventana de acceso temporal dura cuatro horas, queda registrada y se cierra al terminar la tarea aunque todavía quede tiempo. Está prohibido exportar datos del tenant a una hoja local, salvo que el procedimiento del ticket lo exija y el archivo se borre al cerrar el caso.\n\nAlba no usa datos de clientes para entrenar modelos propios, salvo que el contrato de ese cliente lo autorice de forma expresa. Las personas empleadas pueden pedir acceso o corrección de sus datos personales de plantilla escribiendo a privacidad@albapeople.com. People responde en treinta días corridos. Las capturas con datos personales se recortan antes de pegarlas en un ticket interno.\n\nUn cliente que pide exportar o borrar datos de su tenant lo hace desde Administración > Privacidad, o abre un ticket si su plan no muestra esa acción. Soporte no ejecuta un borrado masivo durante la llamada. Confirma el alcance, si el entorno es de prueba o de producción, y que quien pide tiene rol de Administración de Personas. Un tenant de prueba lo puede borrar Soporte con ticket. Uno de producción exige confirmación escrita del cliente y una ventana acordada. El archivo exportado se entrega por el espacio seguro del ticket y se elimina de la estación de Soporte al cerrar el caso.\n\n"
+      },
+      {
+        "chunk_id": "alba-manual::35",
+        "doc_id": "alba-manual",
+        "version": "4.2",
+        "section_title": "35. Atención de soporte a clientes y plazos internos",
+        "score": 0.506191611289978,
+        "text": "## 35. Atención de soporte a clientes y plazos internos\n\nSoporte responde cómo se usa Alba. No responde el criterio laboral particular de la empresa cliente cuando ese criterio no está en una política publicada en su tenant. Si el cliente pregunta cuántos días de vacaciones corresponden a su plantilla, la respuesta sale de la política de ese tenant. Si no hay política cargada, se indica que su Administración de Personas debe definirla. No se improvisa un número ni se ofrecen los veintidós días de la plantilla de Alba como si fueran los del cliente.\n\nLos plazos internos de Alba como empleador, como los tres días hábiles para aprobar una ausencia de su propia plantilla, no se presentan como el plazo de todos los clientes. Cada cliente configura sus rutas. Lo que sí es común es la mecánica: solicitud, estado En curso, cancelación solo si sigue en curso, corrección con cantidad en cero o en 0,5 si ya está aprobada, y saldo proyectado con Saldo al.\n\nUn caso que mezcla una falla del producto con una duda de política se parte en dos: un incidente a Producto y una explicación funcional basada en este manual o en la política del tenant. El cliente recibe un solo resumen, con lo que ya se sabe y lo que sigue en investigación. No se promete una fecha de arreglo que Producto no haya confirmado. El identificador AUS- o el de la política se incluye en el incidente para que Producto reproduzca el caso sin pedir de nuevo los datos.\n\n"
+      },
+      {
+        "chunk_id": "alba-manual::27",
+        "doc_id": "alba-manual",
+        "version": "4.2",
+        "section_title": "27. Roles y permisos en la plataforma",
+        "score": 0.44984710216522217,
+        "text": "## 27. Roles y permisos en la plataforma\n\nLos roles de referencia son Persona, Responsable, Administración de Personas, Administración de Nómina y Auditoría. Persona ve sus datos, sus ausencias, sus recibos, sus documentos y las políticas de su audiencia. Responsable aprueba ausencias y gastos de su equipo y ve la información necesaria para esa aprobación, no el expediente completo. Administración de Personas configura políticas, tipos de ausencia y audiencias. Administración de Nómina ve conceptos de pago del ámbito que tiene asignado. Auditoría consulta registros sin editarlos.\n\nEl criterio es el mínimo privilegio. Un permiso de más se pide por Administración > Solicitar rol, con el motivo y la fecha de fin si el acceso es temporal. El acceso temporal de soporte a un tenant de cliente dura cuatro horas y no se convierte en un rol permanente. Compartir usuario y contraseña para “entrar un momento” está prohibido.\n\nLos cambios de rol quedan en el historial, con autor y fecha. Si una persona cambia de equipo, su rol de Responsable sobre el equipo anterior se retira el mismo día del cambio. Soporte verifica el rol antes de indicar una ruta de menú, porque la pantalla Solicitar ausencia existe para Persona, pero Nueva política solo aparece para Administración de Personas.\n\nUn cliente puede crear roles a partir de los cinco de referencia, sin dar a un rol de consulta la capacidad de borrar el historial. El permiso de exportar nómina no viaja con el rol Responsable. Si un administrador pide el mismo acceso que Soporte de Alba, se rechaza: la ventana de cuatro horas es interna y no se clona en un usuario del cliente. El historial de cambios de rol se conserva mientras el tenant exista. Un rol temporal vencido se retira solo a las 00:00, hora de Madrid, del día siguiente a la fecha de fin. Hasta ese momento la persona sigue viendo las pantallas de ese rol, y Soporte lo aclara antes de tratarlo como una avería.\n\n"
+      }
+    ],
+    "status": "answered",
+    "verification": null
+  }
+]

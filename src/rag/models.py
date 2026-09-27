@@ -149,6 +149,8 @@ class JudgeReport(BaseModel):
     verify_answer: bool
     total: int
     mean_score: float
+    mean_score_positives: float
+    mean_score_negatives: float
     negatives_total: int
     negatives_status_ok: int
     cases: list[JudgedCase]

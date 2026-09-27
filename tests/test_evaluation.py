@@ -316,6 +316,8 @@ def test_judge_gold_set_scores_positives_and_negatives(
 
     assert report.total == 2
     assert report.mean_score == 9.5
+    assert report.mean_score_positives == 9.0
+    assert report.mean_score_negatives == 10.0
     assert report.negatives_status_ok == 1
     assert report.cases[0].status_ok is None
     assert report.cases[1].status_ok is True
