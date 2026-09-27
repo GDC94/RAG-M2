@@ -72,25 +72,20 @@ def _group_into_pieces(
     single paragraph larger than max_tokens becomes its own piece.
     """
     pieces: list[tuple[int, int]] = []
-    current_start: int | None = None
-    current_end: int | None = None
-    current_text = ""
+    if not paragraphs:
+        return pieces
 
-    for para_text, p_start, p_end in paragraphs:
-        if current_start is None:
-            current_start, current_end, current_text = p_start, p_end, para_text
-            continue
+    current_text, current_start, current_end = paragraphs[0]
 
+    for para_text, p_start, p_end in paragraphs[1:]:
         candidate_text = current_text + para_text
         if _count_tokens(candidate_text) <= max_tokens:
             current_end, current_text = p_end, candidate_text
         else:
             pieces.append((current_start, current_end))
-            current_start, current_end, current_text = p_start, p_end, para_text
+            current_text, current_start, current_end = para_text, p_start, p_end
 
-    if current_start is not None:
-        pieces.append((current_start, current_end))
-
+    pieces.append((current_start, current_end))
     return pieces
 
 
