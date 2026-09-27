@@ -1,0 +1,107 @@
+import argparse
+import json
+import os
+import sys
+from collections.abc import Mapping
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import chromadb
+from dotenv import load_dotenv
+
+from rag.client import create_client
+from rag.config import load_settings
+from rag.errors import RagError
+from rag.evaluation import embed_questions, evaluate_recall, load_gold_set, sweep
+from rag.index import ChunkIndex
+from rag.models import GoldSet
+
+
+class _GoldSetError(Exception):
+    code = "gold_set_error"
+
+
+def _parse_float_list(raw: str) -> list[float]:
+    return [float(item) for item in raw.split(",")]
+
+
+def _parse_int_list(raw: str) -> list[int]:
+    return [int(item) for item in raw.split(",")]
+
+
+def _load_gold_set_or_raise(path_str: str) -> GoldSet:
+    try:
+        return load_gold_set(Path(path_str))
+    except (OSError, ValueError) as exc:
+        raise _GoldSetError(str(exc)) from exc
+
+
+def main(argv: list[str], environ: Mapping[str, str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Evaluate retrieval recall against the gold set"
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    recall_parser = subparsers.add_parser("recall")
+    recall_parser.add_argument("--gold", default="data/gold_set.json")
+
+    sweep_parser = subparsers.add_parser("sweep")
+    sweep_parser.add_argument("--gold", default="data/gold_set.json")
+    sweep_parser.add_argument("--top-k", default="1,2,3,4,5,6")
+    sweep_parser.add_argument(
+        "--thresholds", default="0.30,0.35,0.40,0.45,0.50,0.55,0.60"
+    )
+
+    args = parser.parse_args(argv)
+    command: str = str(args.command)
+    gold_path: str = str(args.gold)
+
+    if environ is None:
+        load_dotenv()
+        environ = os.environ
+
+    try:
+        settings = load_settings(environ)
+        client = create_client(settings)
+        chroma = chromadb.PersistentClient(path=settings.db_path)
+        index = ChunkIndex.open(chroma, settings.collection_name, settings.embedding_model)
+        gold = _load_gold_set_or_raise(gold_path)
+        positive_vectors, negative_vectors = embed_questions(
+            client, settings.embedding_model, gold
+        )
+
+        if command == "recall":
+            report = evaluate_recall(
+                gold,
+                positive_vectors,
+                negative_vectors,
+                index,
+                settings.top_k,
+                settings.similarity_threshold,
+            )
+            print(report.model_dump_json(indent=2))
+        else:
+            top_ks = _parse_int_list(str(args.top_k))
+            thresholds = _parse_float_list(str(args.thresholds))
+            rows = sweep(
+                gold, positive_vectors, negative_vectors, index, top_ks, thresholds
+            )
+            print(json.dumps([row.model_dump() for row in rows], indent=2))
+    except RagError as exc:
+        print(json.dumps(exc.to_json(), ensure_ascii=False), file=sys.stdout)
+        return 1
+    except _GoldSetError as exc:
+        print(
+            json.dumps(
+                {"error": {"code": exc.code, "message": str(exc)}}, ensure_ascii=False
+            ),
+            file=sys.stdout,
+        )
+        return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

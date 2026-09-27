@@ -56,3 +56,59 @@ class QueryResponse(BaseModel):
     system_answer: str
     chunks_related: list[RelatedChunk]
     status: AnswerStatus
+
+
+class GoldPositive(BaseModel):
+    id: str
+    category: str
+    question: str = Field(min_length=1)
+    expected_sections: list[str] = Field(min_length=1)
+
+
+class GoldNegative(BaseModel):
+    id: str
+    category: str
+    question: str = Field(min_length=1)
+    expected_status: AnswerStatus
+
+
+class GoldSet(BaseModel):
+    positives: list[GoldPositive]
+    negatives: list[GoldNegative]
+
+
+class CaseResult(BaseModel):
+    id: str
+    question: str
+    expected_sections: list[str]
+    retrieved_sections: list[str]
+    scores: list[float]
+    hit: bool
+    hit_rank: int | None
+
+
+class NegativeResult(BaseModel):
+    id: str
+    question: str
+    expected_status: AnswerStatus
+    top_score: float
+    gated: bool
+
+
+class RecallReport(BaseModel):
+    top_k: int
+    threshold: float
+    total: int
+    hits: int
+    recall: float
+    negatives_total: int
+    negatives_gated: int
+    cases: list[CaseResult]
+    negatives: list[NegativeResult]
+
+
+class SweepRow(BaseModel):
+    top_k: int
+    threshold: float
+    recall: float
+    negatives_gated: int
