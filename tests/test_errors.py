@@ -4,6 +4,7 @@ from rag.errors import (
     ConfigError,
     IndexEmptyError,
     IndexModelMismatchError,
+    IngestionError,
     InvalidQuestionError,
     ProviderError,
     ProviderTimeoutError,
@@ -19,6 +20,7 @@ from rag.errors import (
         (ProviderTimeoutError, "provider_timeout"),
         (IndexEmptyError, "index_empty"),
         (IndexModelMismatchError, "index_model_mismatch"),
+        (IngestionError, "ingestion_error"),
     ],
 )
 def test_to_json_returns_error_code_and_message(error_class, code):

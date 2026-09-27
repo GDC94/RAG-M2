@@ -34,3 +34,7 @@ class IndexEmptyError(RagError):
 
 class IndexModelMismatchError(RagError):
     code = "index_model_mismatch"
+
+
+class IngestionError(RagError):
+    code = "ingestion_error"
