@@ -40,3 +40,19 @@ class IndexReport(BaseModel):
     chunks_indexed: int = Field(ge=0)
     total_tokens: int = Field(ge=0)
     elapsed_seconds: float = Field(ge=0)
+
+
+class RelatedChunk(BaseModel):
+    chunk_id: str
+    doc_id: str
+    version: str
+    section_title: str
+    score: float = Field(ge=0, le=1)
+    text: str
+
+
+class QueryResponse(BaseModel):
+    user_question: str
+    system_answer: str
+    chunks_related: list[RelatedChunk]
+    status: AnswerStatus

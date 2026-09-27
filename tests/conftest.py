@@ -24,18 +24,22 @@ def _vector_for(text: str) -> list[float]:
 class FakeEmbeddingsClient:
     """Duck-typed double of the OpenAI client, shaped like the SDK response."""
 
-    def __init__(self) -> None:
+    def __init__(self, fixed_vector: list[float] | None = None) -> None:
         self.calls: int = 0
         self.last_model: str | None = None
         self.last_input: list[str] | None = None
         self.embeddings = self
+        self._fixed_vector = fixed_vector
 
     def create(self, *, model: str, input: list[str]) -> SimpleNamespace:
         self.calls += 1
         self.last_model = model
         self.last_input = input
         data = [
-            SimpleNamespace(embedding=_vector_for(text), index=index)
+            SimpleNamespace(
+                embedding=self._fixed_vector if self._fixed_vector is not None else _vector_for(text),
+                index=index,
+            )
             for index, text in enumerate(input)
         ]
         return SimpleNamespace(data=data)
@@ -82,3 +86,14 @@ class FakeChatClient:
         self.calls.append(kwargs)
         message = SimpleNamespace(parsed=self._parsed, refusal=None)
         return SimpleNamespace(choices=[SimpleNamespace(message=message)])
+
+
+class FakeRagClient:
+    """Duck-typed double exposing both `.embeddings` and `.chat`, so a single
+    object can serve as the client for both `embed_texts` and `generate`."""
+
+    def __init__(
+        self, embeddings_client: FakeEmbeddingsClient, chat_client: FakeChatClient
+    ) -> None:
+        self.embeddings = embeddings_client.embeddings
+        self.chat = chat_client.chat

@@ -91,6 +91,8 @@ def generate(
     if parsed.status == "not_in_manual":
         return Answer(status="not_in_manual", text=NOT_IN_MANUAL_TEXT, sources=[])
     if parsed.status == "client_policy":
-        return Answer(status="client_policy", text=CLIENT_POLICY_TEXT, sources=filtered_sources)
+        return Answer(
+            status="client_policy", text=CLIENT_POLICY_TEXT, sources=filtered_sources
+        )
 
     return Answer(status=parsed.status, text=parsed.text, sources=filtered_sources)
