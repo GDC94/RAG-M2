@@ -32,3 +32,11 @@ class Answer(BaseModel):
     status: AnswerStatus
     text: str
     sources: list[str] = []
+
+
+class IndexReport(BaseModel):
+    doc_id: str
+    version: str
+    chunks_indexed: int = Field(ge=0)
+    total_tokens: int = Field(ge=0)
+    elapsed_seconds: float = Field(ge=0)
