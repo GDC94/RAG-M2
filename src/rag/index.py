@@ -1,7 +1,24 @@
+from collections.abc import Mapping, Sequence
+
 import chromadb
+from chromadb.api import ClientAPI
 
 from rag.errors import IndexEmptyError, IndexModelMismatchError
 from rag.models import Chunk, RetrievedChunk
+
+
+def _meta_str(metadata: Mapping[str, object], key: str) -> str:
+    value = metadata[key]
+    if not isinstance(value, str):
+        raise TypeError(f"Metadata field {key!r} is not a string: {value!r}")
+    return value
+
+
+def _meta_int(metadata: Mapping[str, object], key: str) -> int:
+    value = metadata[key]
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise TypeError(f"Metadata field {key!r} is not a number: {value!r}")
+    return int(value)
 
 
 class ChunkIndex:
@@ -9,7 +26,7 @@ class ChunkIndex:
         self._collection = collection
 
     @classmethod
-    def open(cls, client: chromadb.ClientAPI, name: str, embedding_model: str) -> "ChunkIndex":
+    def open(cls, client: ClientAPI, name: str, embedding_model: str) -> "ChunkIndex":
         """Open (or create) the named collection, pinned to cosine similarity.
 
         `get_or_create_collection` returns the existing collection with ITS
@@ -38,10 +55,11 @@ class ChunkIndex:
         if not chunks:
             return
 
+        embeddings: list[Sequence[float]] = [vector for vector in vectors]
         self._collection.upsert(
             ids=[chunk.chunk_id for chunk in chunks],
             documents=[chunk.text for chunk in chunks],
-            embeddings=vectors,
+            embeddings=embeddings,
             metadatas=[
                 {
                     "doc_id": chunk.doc_id,
@@ -86,13 +104,13 @@ class ChunkIndex:
                 continue
             chunk = Chunk(
                 chunk_id=chunk_id,
-                doc_id=str(metadata["doc_id"]),
-                version=str(metadata["version"]),
-                section_title=str(metadata["section_title"]),
-                chunk_index=int(metadata["chunk_index"]),
-                char_start=int(metadata["char_start"]),
-                char_end=int(metadata["char_end"]),
-                token_count=int(metadata["token_count"]),
+                doc_id=_meta_str(metadata, "doc_id"),
+                version=_meta_str(metadata, "version"),
+                section_title=_meta_str(metadata, "section_title"),
+                chunk_index=_meta_int(metadata, "chunk_index"),
+                char_start=_meta_int(metadata, "char_start"),
+                char_end=_meta_int(metadata, "char_end"),
+                token_count=_meta_int(metadata, "token_count"),
                 text=document,
             )
             retrieved.append(RetrievedChunk(chunk=chunk, score=score))
