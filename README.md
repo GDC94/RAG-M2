@@ -14,8 +14,7 @@ evaluarlo y qué se midió.
 https://claude.ai/artifact/TveBgKpULmTLYSxqePetpq
 
 Esa página muestra el flujo de indexación, el flujo de consulta con
-ejemplos paso a paso y el mapa de dependencias entre módulos. Es privada:
-para abrirla hace falta que se comparta el enlace.
+ejemplos paso a paso y el mapa de dependencias entre módulos.
 
 ## Requisitos
 
