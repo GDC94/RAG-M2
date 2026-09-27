@@ -15,7 +15,7 @@ Revisado el 2026-09-26 contra `requeriments.md`, el corpus y el proyecto de refe
 - **Producto:** el entregable del curso. Un manual, un operador de soporte, dos scripts de línea de comandos. Un solo límite de confianza.
 - **Fuera de alcance, con señal para evolucionar:** servidor HTTP, front, autenticación, multi-tenant, rate limiting, cache, colas. Ver sección 11.
 - **Eje de crecimiento previsto:** más documentos y más versiones del manual. El diseño lo deja preparado sin construir nada extra.
-- **Herramientas:** Python `>=3.14`, `openai`, `pydantic`, `chromadb`, `python-dotenv`, `tiktoken`, `pytest`. Misma base que RAG-german; no se copian `pypdf` ni `rich`.
+- **Herramientas:** Python `>=3.14`, `openai`, `pydantic`, `chromadb`, `python-dotenv`, `tiktoken`, `pytest`, y `rich` solo para el flag `--pretty` de `query.py` (decisión del 2026-09-27: la salida por defecto sigue siendo JSON; `rich` vive en `rag/render.py`, sin lógica). No se copia `pypdf`. Se instala con `uv` (`pyproject.toml` + `uv.lock`) o con `pip` y `requirements.txt`.
 
 ## 2. Diagnóstico del plan anterior
 

@@ -1,7 +1,9 @@
+import io
 import json
 from pathlib import Path
 
 import pytest
+from rich.console import Console
 
 import query
 
@@ -35,6 +37,35 @@ def test_main_returns_invalid_question_for_blank_input(
 
 
 def test_main_returns_index_empty_when_the_index_has_no_chunks(
+    capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    environ = {"OPENAI_API_KEY": "sk-test", "RAG_DB_PATH": str(tmp_path / "db")}
+
+    exit_code = query.main(["hola"], environ=environ)
+
+    assert exit_code == 1
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+    assert payload["error"]["code"] == "index_empty"
+
+
+def test_main_pretty_renders_error_and_prints_no_json(
+    capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    environ = {"OPENAI_API_KEY": "sk-test", "RAG_DB_PATH": str(tmp_path / "db")}
+    buffer = io.StringIO()
+    console = Console(file=buffer, width=100, force_terminal=False, color_system=None)
+
+    exit_code = query.main(["hola", "--pretty"], environ=environ, console=console)
+
+    assert exit_code == 1
+    rendered = buffer.getvalue()
+    assert "index_empty" in rendered
+    captured = capsys.readouterr()
+    assert captured.out == ""
+
+
+def test_main_without_pretty_still_prints_error_json(
     capsys: pytest.CaptureFixture[str], tmp_path: Path
 ) -> None:
     environ = {"OPENAI_API_KEY": "sk-test", "RAG_DB_PATH": str(tmp_path / "db")}
