@@ -2,6 +2,7 @@
 
 from collections.abc import Callable
 from types import SimpleNamespace
+from typing import Any
 
 import chromadb
 import pytest
@@ -66,3 +67,18 @@ def make_chunk() -> Callable[..., Chunk]:
 @pytest.fixture
 def chroma_client() -> chromadb.ClientAPI:
     return chromadb.EphemeralClient()
+
+
+class FakeChatClient:
+    """Duck-typed double of the OpenAI client's `chat.completions.parse`."""
+
+    def __init__(self, parsed: Any) -> None:
+        self.calls: list[dict[str, Any]] = []
+        self._parsed = parsed
+        self.chat = self
+        self.completions = self
+
+    def parse(self, **kwargs: Any) -> SimpleNamespace:
+        self.calls.append(kwargs)
+        message = SimpleNamespace(parsed=self._parsed, refusal=None)
+        return SimpleNamespace(choices=[SimpleNamespace(message=message)])
