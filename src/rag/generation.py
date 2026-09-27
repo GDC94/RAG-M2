@@ -2,6 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from rag.client import provider_call
 from rag.config import Settings
 from rag.errors import ProviderError
 from rag.models import Answer, AnswerStatus, RetrievedChunk
@@ -66,16 +67,17 @@ def generate(
     if not retrieved:
         return Answer(status="not_in_manual", text=NOT_IN_MANUAL_TEXT, sources=[])
 
-    response = client.chat.completions.parse(
-        model=settings.openai_model,
-        temperature=0,
-        max_completion_tokens=settings.openai_max_output_tokens,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": build_user_message(question, retrieved)},
-        ],
-        response_format=GroundedAnswer,
-    )
+    with provider_call():
+        response = client.chat.completions.parse(
+            model=settings.openai_model,
+            temperature=0,
+            max_completion_tokens=settings.openai_max_output_tokens,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": build_user_message(question, retrieved)},
+            ],
+            response_format=GroundedAnswer,
+        )
     parsed: GroundedAnswer | None = response.choices[0].message.parsed
     if parsed is None:
         raise ProviderError("The model returned no structured answer")

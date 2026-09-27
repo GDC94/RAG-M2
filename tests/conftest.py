@@ -97,3 +97,19 @@ class FakeRagClient:
     ) -> None:
         self.embeddings = embeddings_client.embeddings
         self.chat = chat_client.chat
+
+
+class RaisingClient:
+    """Duck-typed double whose provider calls always raise a given exception."""
+
+    def __init__(self, exc: BaseException) -> None:
+        self._exc = exc
+        self.embeddings = self
+        self.chat = self
+        self.completions = self
+
+    def create(self, **kwargs: Any) -> SimpleNamespace:
+        raise self._exc
+
+    def parse(self, **kwargs: Any) -> SimpleNamespace:
+        raise self._exc

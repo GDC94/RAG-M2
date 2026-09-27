@@ -3,7 +3,7 @@ from typing import Any
 
 from rag.config import Settings
 from rag.embeddings import embed_texts
-from rag.errors import InvalidQuestionError
+from rag.errors import IndexEmptyError, InvalidQuestionError
 from rag.generation import generate
 from rag.index import ChunkIndex
 from rag.ingestion import split_manual
@@ -51,6 +51,8 @@ def answer_question(
         raise InvalidQuestionError(
             f"The question exceeds {settings.max_question_chars} characters"
         )
+    if index.count() == 0:
+        raise IndexEmptyError("The index is empty; run build_index first")
 
     vector = embed_texts(client, settings.embedding_model, [cleaned])[0]
     retrieved = index.search(vector, settings.top_k, settings.similarity_threshold)

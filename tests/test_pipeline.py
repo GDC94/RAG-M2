@@ -5,7 +5,7 @@ import chromadb
 import pytest
 
 from rag.config import load_settings
-from rag.errors import InvalidQuestionError
+from rag.errors import IndexEmptyError, InvalidQuestionError
 from rag.generation import GroundedAnswer
 from rag.index import ChunkIndex
 from rag.models import Chunk
@@ -154,3 +154,16 @@ def test_answer_question_abstains_below_threshold_without_calling_chat(
     assert response.status == "not_in_manual"
     assert response.chunks_related == []
     assert chat_client.calls == []
+
+
+def test_answer_question_rejects_empty_index_without_embedding_calls(
+    chroma_client: chromadb.ClientAPI, fake_embeddings_client: FakeEmbeddingsClient
+) -> None:
+    settings = load_settings({"OPENAI_API_KEY": "sk-test"})
+    collection_name = str(uuid.uuid4())
+    index = ChunkIndex.open(chroma_client, collection_name, settings.embedding_model)
+
+    with pytest.raises(IndexEmptyError):
+        answer_question("hola", settings, fake_embeddings_client, index)
+
+    assert fake_embeddings_client.calls == 0

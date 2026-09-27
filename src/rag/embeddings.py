@@ -1,5 +1,7 @@
 from typing import Any
 
+from rag.client import provider_call
+
 
 def embed_texts(client: Any, model: str, texts: list[str]) -> list[list[float]]:
     """Embed a list of texts into vectors, preserving input order.
@@ -12,6 +14,7 @@ def embed_texts(client: Any, model: str, texts: list[str]) -> list[list[float]]:
     if not texts:
         return []
 
-    response = client.embeddings.create(model=model, input=texts)
+    with provider_call():
+        response = client.embeddings.create(model=model, input=texts)
     ordered = sorted(response.data, key=lambda item: item.index)
     return [list(item.embedding) for item in ordered]
