@@ -1,0 +1,17 @@
+# Secrets
+.env
+
+# Local vector index
+data/chromadb/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,335 @@
+Manual interno de soporte de Alba People
+Versión 4.2 — vigente desde el 1 de marzo de 2026
+
+Este documento es la base de conocimiento que usa el equipo de soporte de Alba People para responder preguntas sobre políticas, procedimientos y funcionalidades. Alba People es una plataforma de gestión de personas para empresas medianas. El texto aplica a las personas empleadas, a quienes prestan servicios como contratistas mientras trabajan para Alba y a quienes integran el directorio. Si una situación no está descrita, la persona consulta a su responsable, a People o a cumplimiento@albapeople.com antes de decidir.
+
+El manual separa tres clases de respuesta. Las políticas dicen qué conducta espera Alba de su plantilla. Los procedimientos dicen en qué plazo y por qué canal se hace cada trámite interno. Las funcionalidades describen pantallas, estados e identificadores del producto, tanto para la plantilla de Alba como para el tenant de un cliente. Cuando un número de este texto es el de Alba como empleador, no se reutiliza como si fuera la regla de un cliente. Si el cliente no publicó la suya, Soporte explica cómo cargarla y no inventa el cupo.
+
+## 1. Valores y alcance del código
+
+Alba People espera que cada decisión de trabajo sea honesta, cuidadosa con las personas y compatible con la ley. Los valores de referencia son respeto, claridad, cuidado de los datos y responsabilidad por el resultado. El código no enumera todos los casos posibles. Sirve para reconocer cuándo una situación pide una pausa y una consulta.
+
+El alcance cubre el trabajo en oficina, el trabajo remoto, los viajes, los eventos, los canales internos y cualquier mensaje en el que la persona represente a Alba, aunque use un dispositivo propio. También cubre el trato con clientes, personas candidatas, proveedores y socios. Incumplir el código puede derivar en una medida disciplinaria, que incluye el fin de la relación laboral cuando la gravedad lo justifica. Antes de llegar a esa instancia, People revisa los hechos, escucha a las personas involucradas y deja constancia escrita.
+
+Si la duda es operativa, el primer destino es el artículo de este manual o la ayuda dentro del producto. Si mezcla ley, datos de clientes o un posible conflicto, se escribe a cumplimiento@albapeople.com. No hace falta tener todas las pruebas. El mensaje describe qué ocurrió, cuándo y quiénes participaron, sin difundir el caso por canales informales. People guarda la consulta en el expediente de ética durante tres años. Preguntar a tiempo no se trata como una admisión de culpa. Una norma local más exigente que esta guía prevalece sobre el manual.
+
+## 2. Lugar de trabajo inclusivo
+
+Alba mantiene un entorno donde cada persona puede hacer su trabajo sin hostigamiento, burla ni exclusión. Eso incluye reuniones, herramientas de chat, comentarios en documentos, actividades fuera de la oficina organizadas por la empresa y grupos de mensajería del equipo. El respeto no depende del rango: aplica igual entre pares, hacia clientes y hacia personas proveedoras que entran a las oficinas o a una videollamada.
+
+Un comentario aislado que humilla, un apodo no pedido, interrumpir de forma sistemática a una persona o dejarla fuera de la información necesaria para su puesto son conductas que People trata como problemas de clima, aunque no lleguen a una denuncia formal. La persona afectada puede hablar con su responsable, con su People Partner o usar el canal de ética. Quien presencia la situación también puede reportarla. No se exige que la persona afectada enfrente sola a quien generó el problema.
+
+Los equipos distribuidos publican en el calendario compartido una franja de solapamiento de al menos tres horas en días laborables. Las decisiones de asignación, prioridad o feedback no se cierran en un chat privado del que queda fuera parte del grupo. People revisa cada trimestre el pulso de clima. Si un equipo repite el mismo tipo de queja, abre una conversación con la jefatura en quince días hábiles. Cuando un cliente pregunta cómo trabajar la inclusión en su empresa, Soporte explica el módulo de pulsos y la publicación de políticas. No redacta la cultura del cliente ni promete un resultado del pulso.
+
+## 3. Igualdad de oportunidades
+
+Las decisiones de contratación, promoción, asignación de proyectos, formación y compensación se toman con criterios del puesto: habilidades, experiencia aplicable y resultados. No se usan como criterio el sexo, la identidad de género, la orientación sexual, el origen, la religión, la edad, la discapacidad, el estado civil, el embarazo ni la pertenencia sindical. Las ofertas de empleo describen requisitos reales del trabajo y evitan condiciones que excluyan sin necesidad.
+
+Quien necesite un ajuste razonable para realizar su trabajo lo pide por escrito a People, en la bandeja Ajustes de puesto. La solicitud puede incluir horario, herramientas, formato de documentos o un cambio de espacio. People responde en un máximo de diez días hábiles con una propuesta, una pregunta de aclaración o la razón documentada si el ajuste no es viable. La información médica que acompañe el pedido se guarda aparte del expediente general y solo la ve el equipo de People que gestiona el caso.
+
+Quien entrevista usa la guía estructurada del puesto y conserva las notas doce meses. Si una persona candidata pide saber por qué no avanzó, Talent responde con los criterios del puesto, sin compararla de forma identificable con otras candidaturas. Las bandas salariales internas de Alba están en Compensación > Bandas. Las consulta People y quien tiene rol de Responsable sobre ese equipo. Soporte no dicta una banda por chat ni confirma el salario de una persona a un compañero. Un ajuste de puesto ya concedido se revisa si cambia el rol, no se retira en silencio.
+
+## 4. Discriminación, acoso y hostigamiento
+
+Alba no tolera la discriminación ni el acoso. El acoso incluye conductas verbales, escritas, visuales o físicas que crean un entorno intimidante, hostil o humillante, aunque la persona que las realiza diga que era una broma. También incluye pedidos de favores personales vinculados a una decisión laboral, y las represalias contra quien rechaza esos pedidos.
+
+La persona puede reportar el caso a su responsable, si esa persona no está involucrada, a People o al canal de ética. People abre expediente en dos días hábiles desde que recibe un reporte con datos mínimos: qué pasó, cuándo y quiénes estaban. La revisión inicial busca concluir en diez días hábiles. Si hace falta más tiempo, People informa a la persona que reportó, sin prometer un resultado ni revelar medidas sobre terceros.
+
+Durante la revisión se limita la difusión al grupo que necesita saber. Se puede separar temporalmente los turnos, las reuniones o la línea de reporte para bajar el contacto, sin que eso se presente como una sanción anticipada. Una denuncia de buena fe no se castiga, aunque la investigación no confirme todos los hechos. Una denuncia que se demuestra inventada a propósito sí puede tener consecuencias.
+
+Insistir, después de un no, con comentarios sobre el cuerpo o la vida íntima de alguien en el canal del equipo es un caso que People trata como acoso. Un desacuerdo fuerte sobre la prioridad de un proyecto, dicho con respeto y limitado al trabajo, no lo es. La diferencia está en el ataque a la persona, no en la crítica a un entregable. Si el caso involucra a alguien de People, se escribe directo a etica@albapeople.com para que lo vea Cumplimiento y no el equipo denunciado. Las medidas provisionales duran lo que tarde la revisión y se documentan en el expediente.
+
+## 5. Salud y seguridad
+
+Cada persona cuida su seguridad y la de quienes trabajan cerca, en la oficina o en casa. Los incidentes, los casi accidentes y las condiciones inseguras se registran en Salud y seguridad dentro de las veinticuatro horas. Si hay una lesión que necesita atención inmediata, primero se pide ayuda local de emergencia y después se avisa a People y al responsable.
+
+En oficina, las salidas de evacuación permanecen despejadas y el simulacro anual es obligatorio para quien esté en el edificio ese día. Quien trabaja en remoto pide el kit de ergonomía en los primeros quince días: silla adecuada y soporte de pantalla, según la guía publicada por People. El pedido se hace en People > Equipamiento. La entrega o el reembolso, con tope publicado en esa misma pantalla, se confirma en diez días hábiles.
+
+Las visitas reciben la indicación de evacuación al entrar a una oficina de Alba. No se bloquean detectores ni se anulan alarmas para una reunión. Quien nota un riesgo inmediato avisa al responsable del sitio y no espera al formulario. El punto de encuentro de la oficina de Madrid está en el recibidor y en People > Sitios. Un accidente durante la jornada remota también se reporta en Salud y seguridad dentro de las veinticuatro horas, aunque haya ocurrido en casa, porque la ley local puede tratarlo como accidente de trabajo. El botiquín de cada planta se revisa el primer lunes de mes.
+
+## 6. Ambiente libre de sustancias
+
+No se trabaja bajo el efecto del alcohol o de drogas ilegales, ni en la oficina ni en remoto durante la jornada, ni en un evento donde la persona representa a Alba. El consumo moderado en un evento social de la empresa solo es aceptable si no afecta el juicio, la conducción ni el trato con otras personas, y nunca antes de operar equipamiento o de tomar una decisión que comprometa datos o dinero.
+
+Si una medicación recetada puede reducir el estado de alerta, la persona lo informa a People de manera confidencial. No está obligada a revelar el diagnóstico. People acuerda con ella y con su responsable un ajuste temporal de tareas, sin anotar el detalle clínico en el chat del equipo. Negarse a una prueba cuando la ley local y una causa concreta la permiten, o presentarse reiteradamente en condiciones no aptas, se trata como un incumplimiento.
+
+Pedir ayuda por un problema de consumo no es, por sí solo, un motivo de sanción. People indica el canal confidencial Apoyo > Salud, en la intranet. Quien ya está en una investigación por un incidente concreto sigue sujeta a esa investigación aunque pida ayuda al mismo tiempo. En un evento, quien va a conducir no consume alcohol. Alba reembolsa como máximo una consumición alcohólica por persona en una comida de equipo. Ese límite se anota en el informe de gastos junto con los nombres de quienes participaron. Superarlo convierte la línea en gasto personal.
+
+## 7. Confidencialidad de la información de Alba
+
+La información de Alba que no es pública se trata como confidencial. Entran en esa categoría los planes de producto no anunciados, los precios no publicados, los datos de nómina, las estrategias de venta, el código fuente, las credenciales y el contenido de un tenant de cliente. La persona usa esa información solo para su trabajo y no la copia a un correo personal, a una unidad particular ni a una herramienta que no esté aprobada.
+
+Al terminar la relación, o al cambiar de puesto si el acceso ya no corresponde, se devuelve o se borra la información según la lista de salida. Hablar de un tema confidencial en un lugar público, incluso sin decir el nombre del cliente, también es una filtración si una tercera persona puede identificar el caso. Las dudas sobre si un dato se puede compartir con un proveedor se consultan con el responsable y, si hay contrato de por medio, con Legal.
+
+El deber de confidencialidad sigue después de la salida, en los términos del contrato. Una referencia o un portafolio público quita nombres de clientes, cifras y capturas que Comunicación no haya autorizado por escrito. Con un proveedor, los canales aprobados son el espacio del contrato en Documentos de proveedor y el correo corporativo. Un enlace abierto sin fecha de caducidad no es un canal aprobado. Tecnología puede revocar un enlace cuando Legal lo pide. El plazo habitual de un enlace externo es de siete días y lo fija quien comparte el archivo.
+
+## 8. Privacidad de datos de personas empleadas y de clientes
+
+Alba separa los datos de su propia plantilla de los datos que los clientes cargan en su tenant. Los datos de la plantilla de Alba se usan para pagar, administrar la relación laboral y cumplir la ley. No se consultan por curiosidad. Quien necesita un dato de otra persona pide el acceso por el flujo de People y explica el motivo. El acceso queda registrado.
+
+Cada tenant de cliente está aislado. Soporte no entra a un tenant para “mirar cómo está configurado” sin un ticket y sin el permiso del cliente. Cuando el permiso existe, la ventana de acceso temporal dura cuatro horas, queda registrada y se cierra al terminar la tarea aunque todavía quede tiempo. Está prohibido exportar datos del tenant a una hoja local, salvo que el procedimiento del ticket lo exija y el archivo se borre al cerrar el caso.
+
+Alba no usa datos de clientes para entrenar modelos propios, salvo que el contrato de ese cliente lo autorice de forma expresa. Las personas empleadas pueden pedir acceso o corrección de sus datos personales de plantilla escribiendo a privacidad@albapeople.com. People responde en treinta días corridos. Las capturas con datos personales se recortan antes de pegarlas en un ticket interno.
+
+Un cliente que pide exportar o borrar datos de su tenant lo hace desde Administración > Privacidad, o abre un ticket si su plan no muestra esa acción. Soporte no ejecuta un borrado masivo durante la llamada. Confirma el alcance, si el entorno es de prueba o de producción, y que quien pide tiene rol de Administración de Personas. Un tenant de prueba lo puede borrar Soporte con ticket. Uno de producción exige confirmación escrita del cliente y una ventana acordada. El archivo exportado se entrega por el espacio seguro del ticket y se elimina de la estación de Soporte al cerrar el caso.
+
+## 9. Propiedad intelectual
+
+Lo que una persona crea en su trabajo para Alba, dentro de su puesto, pertenece a Alba. Eso incluye código, textos de ayuda, diseños, guiones de soporte, modelos de política y materiales de formación. Usar fragmentos propios en un proyecto personal externo requiere autorización escrita de Legal cuando el material se solapa con el producto o con información confidencial.
+
+Alba respeta la propiedad intelectual de terceros. No se copia código, imágenes, textos de políticas ajenas ni manuales de otros productos para pegarlos en el repositorio, en la base de conocimiento o en un entregable a un cliente, salvo que la licencia lo permita y se deje constancia de la atribución. Un artículo público puede citarse con enlace y resumen breve. No se reproduce entero.
+
+Una idea hecha fuera del horario, sin recursos de Alba y sin información confidencial, se puede conversar con Legal antes de publicarla. Las dudas de marca y de logotipo van a comunicacion@albapeople.com. El logotipo no se redibuja para una presentación externa. Los textos de ayuda del producto se versionan en el repositorio de documentación. Copiar un párrafo de un manual ajeno, aunque sea para inspirarse, no está permitido: se resume la idea con palabras propias y, si hace falta la fuente, se cita el enlace. Legal responde una consulta de autoría en diez días hábiles.
+
+## 10. Uso de activos y recursos de la empresa
+
+Los equipos, las cuentas, el software y los espacios de Alba se usan para el trabajo. Un uso personal breve y ocasional es aceptable si no interfiere con las tareas, no incurre en costo relevante, no instala software fuera del catálogo y no almacena contenido ilegal o ofensivo. El portátil y el teléfono entregados por Alba se devuelven en los cinco días hábiles siguientes a la salida, en el estado razonable de uso, a People > Equipamiento o a la oficina que indique el correo de salida.
+
+No se instalan aplicaciones que no estén en el catálogo aprobado. Si una herramienta falta, se pide por Tecnología. Las credenciales no se comparten, ni siquiera con el responsable, y no se guardan en un archivo de texto del escritorio. El gestor de contraseñas de Alba y el segundo factor son obligatorios en el correo, en el producto y en las herramientas de administración.
+
+Alba puede revisar una cuenta o un equipo corporativo cuando hay un motivo concreto de seguridad, una investigación o una obligación legal. La revisión la pide Legal o Seguridad y queda registrada. No es una vigilancia continua del uso personal mínimo que esta política permite. El catálogo de software aprobado se actualiza el primer lunes de cada mes. Una excepción temporal dura como máximo treinta días y la aprueba Tecnología. Perder el portátil se reporta a seguridad@albapeople.com en el plazo de una hora, y People > Equipamiento gestiona el reemplazo después del bloqueo remoto.
+
+## 11. Regalos, atenciones y eventos
+
+Un regalo o una atención de cortesía es aceptable solo si es moderado, infrecuente y no busca influir en una decisión. El tope orientativo es cincuenta euros, o el equivalente en moneda local. Nunca se acepta ni se ofrece dinero en efectivo, tarjetas de regalo canjeables por efectivo, préstamos personales ni un beneficio para un familiar a cambio de una decisión comercial o laboral.
+
+Si el valor supera veinticinco euros, la persona lo anota en el Registro de atenciones dentro de los cinco días hábiles, aunque lo haya rechazado. El registro pide fecha, quien ofrece, valor estimado y motivo. People y Cumplimiento revisan el registro cada mes. Las invitaciones a un evento profesional se aceptan si el contenido es formativo y el viaje no lo paga un tercero que esté en una negociación activa, salvo aprobación previa de Legal.
+
+Ofrecer un regalo a un cliente sigue el tope de cincuenta euros y, si la política del cliente es más estricta, prevalece la del cliente. Ante la duda se rechaza el regalo y se avisa al responsable. Varios gestos con la misma contraparte que, sumados en un trimestre, superan cincuenta euros se tratan como un solo exceso. Un sorteo interno de Alba no es un regalo de un tercero y no se anota en el Registro de atenciones. El viaje pagado por un proveedor en negociación activa se rechaza salvo aprobación previa de Legal, aunque el contenido de la jornada sea formativo.
+
+## 12. Conflictos de interés
+
+Hay conflicto cuando un interés personal puede influir, o parecer que influye, en una decisión de Alba. Ejemplos: contratar a un familiar, supervisar a una pareja, tener participación en un proveedor, aceptar un trabajo externo que compite con Alba o usar información del trabajo para un negocio propio. Tener un familiar en la empresa no está prohibido. Ocultarlo, o decidir sobre su salario, sí lo está.
+
+La persona informa el conflicto a su responsable y a cumplimiento@albapeople.com en un máximo de cinco días hábiles desde que lo conoce. El correo describe los hechos, sin necesidad de resolverlos en ese mismo mensaje. Cumplimiento responde con una medida: apartar a la persona de la decisión, cambiar la línea de reporte o documentar que no hace falta cambio. Mientras no hay respuesta, la persona no participa en esa decisión.
+
+Un trabajo externo se declara antes de empezarlo si usa horario, recursos o conocimiento confidencial de Alba. El voluntariado y la docencia ocasional, sin esos cruces, no requieren declaración, pero se pausan si afectan las entregas. Una participación en un proveedor se declara aunque sea pequeña y aunque la persona no decida compras. Cumplimiento responde la declaración en diez días hábiles. Si al día once no hay respuesta, la persona reenvía el correo y sigue apartada de esa decisión. La medida queda en el expediente y se revisa si cambia el puesto o el proveedor.
+
+## 13. Pagos indebidos y anticorrupción
+
+Alba prohíbe ofrecer, prometer, dar, pedir o aceptar sobornos, comisiones ocultas o cualquier beneficio impropio para conseguir o conservar un negocio, una licencia o un trato favorable. La prohibición cubre a funcionarios públicos y también a personas de empresas privadas. Un pago pequeño para “agilizar” un trámite rutinario tampoco se hace por cuenta propia. Si alguien lo pide, se frena la gestión y se avisa a Legal el mismo día.
+
+Los contratos con terceros incluyen la expectativa de conducta íntegra. Quien contrata revisa que el proveedor no pida pagos fuera de la factura acordada. Las facturas describen el servicio real. No se crean fondos sin registro, cajas chicas paralelas ni reembolsos que disfrazan un beneficio prohibido. Los descuentos comerciales siguen la matriz de precios vigente y quedan en el sistema, no en un acuerdo paralelo por chat.
+
+Quien trata con administraciones públicas completa la formación de anticorrupción en los primeros treinta días y la renueva cada año. Si un socio pide una excepción, responde Legal, no una conversación de feria. Los obsequios a funcionarios están prohibidos aunque estén por debajo de cincuenta euros. Una comida de trabajo con un organismo público se carga en el informe de gastos con el motivo y los nombres. Legal puede pedir el detalle antes del reembolso. Un pago a una cuenta personal para “simplificar la factura” se rechaza y se reporta el mismo día a cumplimiento@albapeople.com.
+
+## 14. Competencia leal
+
+Alba compite por el mérito del producto y del servicio. No se acuerdan precios, descuentos, repartos de clientes ni estrategias de licitación con una empresa competidora. En una feria, una asociación o un grupo de mensajería del sector, la conversación se corta si deriva en esos temas, y se informa a Legal si la otra parte insiste.
+
+No se obtiene información de un competidor por medios engañosos: hacerse pasar por cliente, pedir a una persona recién contratada que traiga material confidencial de su empleo anterior o extraer datos de un sistema ajeno sin permiso. La información pública, como una página de precios abierta o un comunicado, sí se puede analizar.
+
+Las comparaciones comerciales tienen que ser verificables y actuales. No se inventan fallas de otro producto ni se usan testimonios sin autorización de quien los dio. Soporte no opina sobre la situación legal o financiera de un competidor. Si el cliente pide ese juicio, la conversación vuelve a las capacidades documentadas de Alba, con el artículo o la pantalla que las muestra. Una conversación de precios por chat privado con alguien de otra empresa se reporta a Legal el mismo día, aunque no se haya cerrado ningún acuerdo. Guardar la lista de precios interna en un correo personal también es una filtración, no una ventaja competitiva.
+
+## 15. Registros precisos
+
+Los registros de Alba dicen lo que ocurrió. Horas trabajadas, gastos, contratos, métricas de soporte y asientos que alimentan un informe se anotan con veracidad. No se redondea un gasto para que “pase”, no se carga una hora no trabajada para cumplir una meta y no se altera un ticket cerrado para mejorar un indicador. Si hay un error, se corrige dejando rastro. Borrar un registro para ocultar el error no es una corrección.
+
+La nómina, los contratos laborales y los comprobantes fiscales de Alba se conservan seis años, salvo que la ley local pida más. Los tickets de soporte con datos de un tenant se conservan según el plazo del contrato de ese cliente, que por defecto es veinticuatro meses desde el cierre. Quien archiva un documento confirma que el nombre y la carpeta corresponden al tipo de dato, para no mezclar información de clientes con notas internas.
+
+Quien tiene firma financiera no aprueba un pago que no entiende. Pide el respaldo y, si falta, devuelve la solicitud. Firmar para salir del paso y revisar después no es una práctica aceptada. Una corrección de un asiento o de una métrica de soporte se hace con un movimiento nuevo que referencia al original. El historial muestra autor, fecha y valor anterior. Auditoría puede leer ese historial y no puede editarlo. Cerrar un ticket de soporte con una causa que no corresponde, para mejorar el indicador del día, es un registro falso y se corrige aunque el mes ya esté informado.
+
+## 16. Uso responsable de la inteligencia artificial
+
+El Asistente Alba puede consultar el saldo de ausencias, el estado de una solicitud, el texto de las políticas publicadas en el tenant y los artículos de esta base de conocimiento. No decide sanciones, salarios, despidos ni el resultado de una investigación. Esas decisiones las toma una persona identificada, con los datos del caso.
+
+Está prohibido pegar en una herramienta de inteligencia artificial no aprobada el contenido de un tenant, un recibo de sueldo, un expediente de acoso o código propietario. La lista de herramientas aprobadas está en Tecnología > Catálogo. Si el asistente propone un paso que contradice este manual, prevalece el manual y la persona reporta el caso en el canal de calidad del asistente, dentro del producto, con la pregunta y la respuesta.
+
+Los clientes que activan funciones de inteligencia artificial ven en su contrato si sus datos pueden usarse para mejorar modelos. Sin esa cláusula, Alba no entrena con esos datos. El equipo de soporte explica este límite cuando un cliente pregunta si “la IA aprende de nuestra nómina”. La respuesta correcta es que no, salvo autorización contractual expresa.
+
+El Asistente Alba no ve expedientes de ética, notas de una investigación, salarios de otras personas ni el contenido de un tenant distinto del que tiene abierta la sesión. Si la pregunta pide uno de esos datos, indica que no tiene acceso y deriva a People o a Soporte humano. Las conversaciones con el asistente se conservan noventa días para revisar qué artículo se citó, no para evaluar el desempeño. Un resumen generado por el asistente no se pega en un expediente laboral sin que una persona lo contraste con este manual. Si el contraste muestra un plazo distinto, vale el manual.
+
+## 17. Redes sociales y comunicaciones públicas
+
+Las cuentas personales son de cada persona. Puede mencionar que trabaja en Alba, siempre que no hable en nombre de la empresa, no publique datos de clientes, no muestre capturas de un tenant y no anticipe una función que Comunicación no haya anunciado. Las opiniones personales se presentan como propias. No se usa el logotipo ni una firma de correo que parezca un comunicado oficial.
+
+Solo Comunicación y las personas que esa área autorice hablan en nombre de Alba ante prensa, redes oficiales o un evento. Si un medio contacta a alguien del equipo, se reenvía el mensaje a comunicacion@albapeople.com y no se responde por cuenta propia, aunque la pregunta parezca sencilla. Las reseñas de producto que una persona quiere publicar como usuaria se conversan antes si identifican clientes o cifras internas.
+
+Un mensaje ofensivo publicado fuera del horario se puede revisar si se vincula de forma clara con el trabajo o si hostiga a alguien del equipo, siempre bajo las políticas de respeto y de no represalias. Esta norma no impide conversar sobre condiciones de trabajo en los espacios que la ley protege. Una captura de una pantalla de Alba sigue siendo información interna aunque tape el nombre del cliente, si muestra una métrica, un precio o un flujo no público. Se retira y se avisa a comunicacion@albapeople.com. Comunicación responde una consulta de prensa interna en un día hábil.
+
+## 18. Canal para reportar y prohibición de represalias
+
+Quien ve o sospecha un incumplimiento puede hablar con su responsable, con People o escribir a etica@albapeople.com. También puede usar el portal linea-etica.albapeople.com, con nombre o de forma anónima donde la ley lo permite. No hace falta estar seguro de que hubo una infracción. Alcanza con describir hechos: fechas, sistemas, nombres si se conocen y documentos, sin lanzar una conclusión.
+
+Alba prohíbe las represalias contra quien reporta de buena fe, contra quien colabora en una revisión y contra quien pide un ajuste o ejerce un derecho laboral. Bajar el salario, cambiar el turno de forma punitiva, aislar a la persona o amenazar con una mala referencia por haber reportado son represalias, aunque se disfracen de “reorganización”. Esas conductas se reportan por el mismo canal y se revisan con prioridad.
+
+La persona que reporta recibe un acuse en dos días hábiles, salvo que el reporte sea anónimo y no haya dejado un canal de retorno. No siempre podrá conocer la medida aplicada a otra persona, porque eso también es información confidencial. Sí puede pedir el estado general del caso: recibido, en revisión o cerrado.
+
+El portal anónimo entrega un código de seguimiento. Sin ese código no hay forma de ampliar el relato ni de recibir el acuse. People no intenta identificar a quien eligió el anonimato. Si el relato no trae hechos mínimos, el caso se cierra como insuficiente y el código queda disponible treinta días por si la persona agrega fechas, sistemas o documentos. Pedir el estado con el código muestra solo recibido, en revisión o cerrado. No muestra nombres de otras personas ni la medida aplicada. Una represalia detectada abre un expediente propio, con el mismo plazo de revisión inicial de diez días hábiles.
+
+## 19. Cómo solicitar vacaciones
+
+La plantilla de Alba tiene veintidós días hábiles de vacaciones por año calendario, que se devengan a razón de 1,83 días por mes cumplido. El saldo se puede usar después de noventa días de antigüedad. Los días no se sustituyen por dinero, salvo que la ley local obligue a liquidarlos al terminar la relación. Se pueden trasladar al año siguiente hasta cinco días, que caducan el 31 de marzo.
+
+Si la ausencia dura tres días hábiles o más, se solicita con al menos diez días hábiles de anticipación. Las ausencias de uno o dos días se piden con la mayor anticipación posible y, como mínimo, antes del inicio del turno del primer día, salvo una urgencia que se explica en el comentario. El máximo seguido, sin un acuerdo escrito de People, es de quince días hábiles.
+
+El responsable aprueba o rechaza en tres días hábiles. Si no responde, la solicitud sube a la persona siguiente en la línea de reporte y queda marcada como vencida en Gestionar ausencias. Un rechazo incluye un motivo. La persona puede proponer otras fechas. El saldo proyectado se consulta eligiendo una fecha en el campo Saldo al, para ver el efecto de solicitudes todavía no aprobadas.
+
+Entre el 22 de diciembre y el 2 de enero no se aprueban ausencias nuevas de más de cinco días hábiles si el equipo quedaría por debajo del mínimo de cobertura que publicó la jefatura. Un medio día cuenta como 0,5 y solo se ofrece si el calendario laboral del país lo permite. El saldo negativo no existe. Si Saldo al queda por debajo de cero, el producto impide enviar y muestra cuántos días faltan. Los festivos del calendario no consumen vacaciones. Cargarlos como vacaciones solo ocurre si la persona elige usar saldo ese día, y el producto lo advierte antes de enviar.
+
+## 20. Cómo cancelar una solicitud de ausencia pendiente
+
+Una solicitud que sigue en estado En curso se puede cancelar. La persona entra a Inicio, luego a Ausencias y abre Gestionar ausencias. Localiza el pedido y elige Cancelar solicitud. El sistema pide un comentario breve. Ese comentario queda en la ficha del trámite y lo ve quien ya hubiera recibido la tarea de aprobación.
+
+Cancelar desde el botón de una notificación de correo o de la campana no cierra el trámite. Ese botón solo abre el mensaje. Si la persona lo usa y no completa la cancelación en Gestionar ausencias, la solicitud sigue viva y puede aprobarse. Conviene revisar el estado al final del día en que se intentó cancelar.
+
+Cuando la cancelación queda hecha, el saldo reservado vuelve a estar disponible. Si el responsable ya había empezado a revisar el pedido pero no lo había aprobado, recibe un aviso de que el trámite se retiró. No hace falta que lo rechace. Soporte, ante un caso de “cancelé y sigue pendiente”, comprueba primero si la acción se hizo en Gestionar ausencias y no solo en la notificación.
+
+No se anula un solo día de un rango que sigue En curso sin tocar el resto desde la ficha. Se cancela el trámite completo y, si hace falta, se carga de nuevo el tramo que sí se quiere mantener. Dos solicitudes solapadas no conviven: la segunda queda bloqueada hasta que la primera se resuelva o se retire. El identificador del trámite, visible en la ficha y con prefijo AUS-, es el dato que Soporte pide cuando el estado que ve la persona no coincide con el que ve su responsable. Cancelar no borra el historial. La ficha queda en estado Cancelada con el comentario.
+
+## 21. Cómo corregir una ausencia ya aprobada
+
+Una ausencia en estado Aprobada no se cancela. Se corrige. En Gestionar ausencias se abre el día afectado y se ajusta la cantidad. Para anular el día completo, la cantidad se deja en cero y se escribe un comentario al aprobador con el motivo. El cambio vuelve a la ruta de aprobación. Hasta que esa corrección se aprueba, el día original sigue descontado del saldo proyectado.
+
+Si la ausencia ya ocurrió y la persona trabajó igual, la corrección también es el camino, no un ticket informal a nómina. Nómina toma el calendario de ausencias aprobado al cierre de la quincena de pago. Una corrección aprobada después de ese cierre entra en el periodo siguiente. Por eso conviene hacerla apenas se conoce el cambio.
+
+El responsable que recibe la corrección la trata en los mismos tres días hábiles que una solicitud nueva. Si la corrección abarca varios días, se puede dejar un comentario distinto en cada día. Soporte no modifica el saldo a mano. Si el calendario muestra un error de sistema, se abre un incidente a Producto con capturas recortadas y el identificador de la solicitud.
+
+Si la persona trabajó solo parte del día aprobado, la corrección puede dejar la cantidad en 0,5, siempre que ese tipo de ausencia admita medios días. Una ausencia por enfermedad ya respaldada con certificado no se convierte en vacaciones para conservar el saldo, salvo acuerdo escrito de People. El identificador de la corrección es distinto del de la solicitud original y ambos quedan enlazados en la ficha. Nómina cierra la quincena de pago el antepenúltimo día hábil del mes. Una corrección aprobada después de ese cierre entra en el recibo del mes siguiente, con el código de regularización AUS-REG.
+
+## 22. Licencias por enfermedad y licencias parentales
+
+Si la persona no puede trabajar por enfermedad, avisa a su responsable antes del inicio del turno, por el producto o por el canal de mensajería del equipo. La solicitud de ausencia por enfermedad se carga el mismo día en que es posible hacerlo. Si la ausencia supera dos días hábiles consecutivos, se adjunta un certificado médico en Documentos, carpeta Licencias, dentro de las cuarenta y ocho horas de haberlo obtenido. El certificado lo ve People, no todo el equipo.
+
+La licencia parental de referencia en Alba es de dieciséis semanas. Cuando la fecha es previsible, se solicita con treinta días de anticipación desde Ausencias > Solicitar ausencia, tipo Licencia parental. People confirma por escrito el calendario, el contacto durante la licencia y la forma de retorno. El puesto se reserva en los términos de la ley aplicable. Las preguntas de salario durante la licencia las responde Nómina, no el chat del equipo.
+
+Otras licencias previstas por la ley local, como duelo, matrimonio, mudanza o deberes públicos, se piden con el tipo correspondiente. Si el tipo no aparece en el tenant de Alba como empleador, People lo habilita. El soporte a clientes, cuando la pregunta es sobre el tenant del cliente y no sobre la plantilla de Alba, indica que los tipos de ausencia los configura Administración de Personas de ese cliente.
+
+En la plantilla de Alba, el duelo por un familiar directo es de tres días hábiles, el matrimonio o la unión registrada es de cinco días hábiles y la mudanza es de un día hábil, una vez por año. Esos cupos no se copian a la respuesta de un cliente. En el tenant del cliente, los tipos y los días los define su Administración de Personas. Si el tipo no existe, Soporte indica la ruta Ausencias > Tipos y no inventa un cupo. El certificado médico no se reenvía al responsable. People confirma solo si el documento está cargado y si cubre las fechas, sin describir el diagnóstico en el chat del equipo.
+
+## 23. Incorporación durante los primeros treinta días
+
+El ingreso tiene una lista de treinta días. El día uno, People entrega la cuenta, el equipo y el acceso a las políticas obligatorias. La persona completa el reconocimiento de esas políticas y el alta de datos bancarios y fiscales que Nómina necesita. Sin los datos fiscales válidos, el primer pago puede pasar al periodo siguiente, y People lo advierte en la reunión inicial.
+
+Al quinto día hábil la persona ya ve Mis recibos, aunque el primer recibo todavía no exista, y confirma que el rol asignado coincide con su puesto. Al día quince se reúne con su People Partner para revisar dudas de políticas, herramientas y objetivos de entrada. Al día treinta, la jefatura y la persona cierran la evaluación breve de incorporación: qué se aprendió, qué acceso falta y si el plan de noventa días sigue vigente.
+
+Si al quinto día hábil la persona no ve Mis recibos, Soporte comprueba que el alta de la cuenta terminó y que el rol es Persona. Un acceso de otro rol no se presta por chat. El cambio se pide en Administración > Solicitar rol. El plan de noventa días lo carga la jefatura en Objetivos y no sustituye la evaluación de marzo o de septiembre. People Partner de Madrid atiende las incorporaciones de España. El resto de países tiene el contacto en People > Países. Sin datos bancarios válidos el día quince, Nómina avisa que el primer pago pasa al mes siguiente y no hace un adelanto automático.
+
+## 24. Reconocimiento de lectura de políticas
+
+Las políticas marcadas como obligatorias piden un reconocimiento: la persona confirma que las leyó y que las entiende. El plazo es de catorce días corridos desde la asignación. El producto envía un recordatorio al día siete y otro al día doce. La tarea aparece en Bandeja > Reconocimientos. Abrir el documento no alcanza. Hay que pulsar Reconocer al final.
+
+Si el plazo vence sin reconocimiento, Alba limita algunas tareas no esenciales, como altas de gastos nuevas o la publicación de una política si la persona tiene ese permiso. No se bloquean el salario, la solicitud de ausencias ni el canal de ética. People puede ampliar el plazo si hay una licencia en curso. La ampliación se anota en la ficha y genera una nueva fecha visible para la persona.
+
+Administración de Personas ve el avance en Políticas > Seguimiento: asignadas, reconocidas y vencidas, por equipo y por país. Esos informes no se exportan a un correo personal. Cuando se publica una versión nueva de una política obligatoria, el reconocimiento anterior no se reutiliza. La persona debe reconocer la versión vigente, identificada por número y fecha.
+
+People pausa el reloj de reconocimiento el día en que empieza una licencia y lo reanuda al volver, con los días que faltaban. Quien delega la bandeja durante unas vacaciones no delega el reconocimiento: ese acto es personal y lo hace la persona asignada. Si el botón Reconocer no aparece, lo habitual es que la política no esté en su audiencia o que esa versión ya esté reconocida. El histórico muestra la fecha, la hora y el número de versión. Un reconocimiento hecho por error no se borra. Se publica la aclaración y, si la versión sigue vigente, People deja constancia en la ficha sin pedir un segundo clic.
+
+## 25. Nómina y recibos
+
+Alba paga el último día hábil del mes. Si esa fecha cae en un feriado de la entidad bancaria que procesa el pago, el abono se adelanta al día hábil anterior. El recibo queda en Mis recibos como máximo el segundo día hábil después del pago. La persona revisa conceptos, días de ausencia y datos fiscales. Las observaciones se envían a nomina@albapeople.com dentro de los diez días hábiles siguientes a la publicación del recibo.
+
+Nómina no corrige un recibo por un mensaje de chat sin ticket. El correo o el formulario de Mis recibos > Observar recibo abre el caso con el periodo y el concepto en duda. Si el error es de Alba, la diferencia se regulariza en el periodo siguiente o, si la ley local lo exige, en un pago complementario. Un error que la persona no reporta en el plazo se atiende igual si el dato es verificable, pero puede demorar más.
+
+Los adelantos excepcionales los aprueba People y Finanzas juntos, y solo por las causas publicadas: una incidencia grave de pago atribuible a Alba. No se otorgan como préstamo personal. El soporte no informa el salario de una persona a un compañero, aunque el compañero sea su responsable, si ese responsable no tiene el permiso de compensación en su rol.
+
+El recibo muestra el salario base, los complementos publicados, las deducciones legales y el neto. Un complemento de guardia aparece con el código GRD y las horas del turno de Operaciones. Si el neto no coincide con el abono del banco, la persona adjunta el comprobante en Mis recibos > Observar recibo. Nómina responde ese ticket en cinco días hábiles. Soporte de producto no recalcula el neto. Explica dónde está el recibo y, cuando quien pregunta pertenece a la plantilla de Alba, deriva el caso a nomina@albapeople.com. El recibo de un cliente no lo ve Soporte de Alba salvo en la ventana de acceso de cuatro horas y con ticket.
+
+## 26. Gastos y viajes
+
+El informe de gastos se presenta dentro de los quince días corridos posteriores al gasto, en Gastos > Nuevo informe. Si el gasto supera veinticinco euros, o el equivalente en moneda local, el comprobante es obligatorio. Sin comprobante, la línea se devuelve, salvo una declaración jurada excepcional aprobada por Finanzas cuando el comprobante era imposible de obtener y el monto queda por debajo del tope de esa declaración, publicado en la misma pantalla.
+
+Los viajes se piden en Viajes antes de comprar, con destino, fechas y motivo. El responsable aprueba el viaje y, por separado, el informe de gastos al regreso. Un anticipo se rinde en los diez días hábiles posteriores al regreso. El saldo no rendido se descuenta del próximo pago si la persona no responde al aviso de Finanzas en cinco días hábiles.
+
+No se cargan gastos personales, propinas fuera de la práctica local razonable ni mejoras de hotel no aprobadas. Una comida de equipo lista los nombres de quienes participaron. Si el viaje se combina con vacaciones, el informe separa los días y Alba paga solo la porción de trabajo, con la tarifa de referencia publicada en Viajes > Tarifas. El tope de hotel es de ciento ochenta euros por noche en Madrid y de ciento cincuenta en el resto de ciudades, salvo aprobación de Finanzas antes de reservar. Un comprobante en otro idioma se acepta si la fecha, el proveedor y el importe se leen con claridad. Finanzas puede pedir una traducción breve cuando el concepto no se entiende.
+
+## 27. Roles y permisos en la plataforma
+
+Los roles de referencia son Persona, Responsable, Administración de Personas, Administración de Nómina y Auditoría. Persona ve sus datos, sus ausencias, sus recibos, sus documentos y las políticas de su audiencia. Responsable aprueba ausencias y gastos de su equipo y ve la información necesaria para esa aprobación, no el expediente completo. Administración de Personas configura políticas, tipos de ausencia y audiencias. Administración de Nómina ve conceptos de pago del ámbito que tiene asignado. Auditoría consulta registros sin editarlos.
+
+El criterio es el mínimo privilegio. Un permiso de más se pide por Administración > Solicitar rol, con el motivo y la fecha de fin si el acceso es temporal. El acceso temporal de soporte a un tenant de cliente dura cuatro horas y no se convierte en un rol permanente. Compartir usuario y contraseña para “entrar un momento” está prohibido.
+
+Los cambios de rol quedan en el historial, con autor y fecha. Si una persona cambia de equipo, su rol de Responsable sobre el equipo anterior se retira el mismo día del cambio. Soporte verifica el rol antes de indicar una ruta de menú, porque la pantalla Solicitar ausencia existe para Persona, pero Nueva política solo aparece para Administración de Personas.
+
+Un cliente puede crear roles a partir de los cinco de referencia, sin dar a un rol de consulta la capacidad de borrar el historial. El permiso de exportar nómina no viaja con el rol Responsable. Si un administrador pide el mismo acceso que Soporte de Alba, se rechaza: la ventana de cuatro horas es interna y no se clona en un usuario del cliente. El historial de cambios de rol se conserva mientras el tenant exista. Un rol temporal vencido se retira solo a las 00:00, hora de Madrid, del día siguiente a la fecha de fin. Hasta ese momento la persona sigue viendo las pantallas de ese rol, y Soporte lo aclara antes de tratarlo como una avería.
+
+## 28. Solicitar una ausencia en la plataforma
+
+La ruta es Inicio, Ausencias, Solicitar ausencia. En el calendario se elige el día o se arrastra un rango. También existe Seleccionar rango de fechas cuando la ausencia cruza de mes. Después se indica el tipo, por ejemplo vacaciones, enfermedad o licencia parental, y un comentario al aprobador si el tipo lo pide. El comentario del trámite lo ve quien aprueba. El comentario de cada día, si se carga, queda en el detalle de esa fecha.
+
+Antes de enviar, conviene mirar Saldo al con una fecha posterior a la ausencia, para confirmar que el saldo proyectado alcanza. Si el tipo elegido no admite el día porque el calendario laboral lo marca como no laborable, el producto lo retira del pedido y lo indica en el resumen. La persona no debe volver a cargarlo a mano como día trabajado.
+
+Desde el móvil, la ruta equivalente está en la aplicación, pestaña Ausencias. La firma no interviene en este flujo. Si el botón Solicitar ausencia no aparece, casi siempre el rol no es Persona o la cuenta todavía no cumplió el alta del día uno. Soporte no pide al usuario que pruebe con la cuenta de otra persona.
+
+Los estados visibles son Borrador, En curso, Aprobada, Rechazada y Cancelada. Borrador no reserva saldo y lo puede eliminar la propia persona. En curso reserva saldo. Aprobada descuenta el saldo cuando llega la fecha, según la regla del tipo. Rechazada y Cancelada liberan la reserva. Soporte pide el identificador AUS- cuando el estado que ve la persona no coincide con el de su responsable. El comentario al aprobador tiene un máximo de quinientos caracteres. Un adjunto, si el tipo lo pide, se carga en el trámite y no en un correo aparte. El móvil usa la misma máquina de estados. Una solicitud enviada en la aplicación aparece en la web al refrescar, sin un segundo envío.
+
+## 29. Documentos y firma electrónica
+
+Hay dos lugares distintos. Archivos de la empresa guarda materiales comunes, como el manual o una política maestra. Documentos, dentro del perfil, guarda piezas de una persona: contrato, certificado o formulario fiscal. Subir un manual al perfil individual dificulta que el resto lo encuentre. Subir un certificado a Archivos de la empresa lo expone de más. La regla es: si habla de una sola persona, va a su Documentos; si habla de un grupo, va a Archivos o a Políticas.
+
+Cuando hay una firma pendiente, la tarea llega a Bandeja > Firmas pendientes. La persona revisa el documento completo, completa los campos marcados y firma. Puede guardar su trazo para reutilizarlo. La confirmación muestra fecha y versión del documento. Lo firmado queda en Documentos > Firmados y no se sustituye en silencio: una versión nueva genera una tarea nueva.
+
+En el móvil la ruta es Mi información > Documentos. Desde ahí se consulta, se sube una foto si el permiso de carga está activo y se firma. La foto tiene que ser legible y no debe incluir otros documentos en el mismo encuadre. Un fallo de firma se reporta con la hora y el identificador del documento, sin reenviar el archivo por correo. La firma guardada se borra en Mi información > Firma guardada. Borrarla no invalida lo ya firmado. Un documento caducado deja de aceptar firma y Administración de Personas tiene que publicar una versión nueva. Soporte no reactiva una versión retirada para “dejar firmar a una persona que faltaba”.
+
+## 30. Publicar políticas, audiencia y seguimiento
+
+Administración de Personas publica una política en Políticas > Nueva política. Carga el documento, la fecha de vigencia, el número de versión y si el reconocimiento es obligatorio. La audiencia se puede limitar por país, por equipo o por rol. Una política de un país no se asigna al resto “por si acaso”. Quien no está en la audiencia no la ve y no recibe la tarea.
+
+El seguimiento está en Políticas > Seguimiento. Muestra asignadas, reconocidas, pendientes y vencidas. Esos números sirven para recordar, no para sancionar de forma automática. People decide caso por caso si un vencimiento tiene causa justificada, como una licencia. Las personas pueden abrir las versiones anteriores desde la ficha de la política, en el historial, para ver qué cambió. El reconocimiento vigente es solo el de la versión actual.
+
+Este módulo cubre, entre otros, manuales, códigos de conducta, normas de seguridad de la información, salud y seguridad, gastos y viajes, acuerdos de trabajo remoto y textos de protección de datos. Publicar no reemplaza la comunicación del responsable cuando el cambio afecta la forma diaria de trabajar. Conviene un aviso breve en el canal del equipo el mismo día de la publicación.
+
+Una política en borrador no genera tareas ni la ve la audiencia. Solo cuenta la versión publicada. Si la vigencia se programa para una fecha futura, el texto queda visible para Administración de Personas y el reconocimiento se dispara ese día, no antes. Retirar una política oculta el texto a la audiencia y conserva en el seguimiento quién reconoció la última versión. Retirar no borra el archivo del historial. El aviso al canal del equipo lo escribe el responsable, el mismo día, con el número de versión y la fecha. Soporte no confirma que “todo el mundo ya la leyó” solo porque la política está publicada: hace falta mirar Políticas > Seguimiento.
+
+## 31. Evaluaciones de desempeño
+
+Alba hace dos ciclos al año, en marzo y en septiembre. Cada ciclo tiene diez días hábiles de autoevaluación y diez días hábiles para que el responsable complete la suya. Después, People coordina una calibración entre jefaturas del mismo ámbito para que criterios parecidos se apliquen de forma pareja. El resultado se conversa en una reunión, no se entera la persona solo por una notificación.
+
+El formulario pide ejemplos de trabajo del periodo, no impresiones generales. El Asistente Alba puede ayudar a encontrar políticas o fechas de proyectos públicos internos, pero no redacta la evaluación final ni sugiere una calificación. Pegar datos de un cliente en el formulario está prohibido: se describe el tipo de trabajo sin identificar el tenant.
+
+Si hay desacuerdo, la persona lo conversa primero con su responsable. Si sigue abierto, escribe a su People Partner en los diez días hábiles posteriores a la reunión. People no promete cambiar la calificación. Revisa si se cumplieron los plazos y si los ejemplos citados están en el formulario. La evaluación no es el único insumo de una desvinculación. Las calificaciones de referencia son Por debajo, En línea y Por encima. No hay una nota del uno al diez. Un ciclo cerrado no se reabre para agregar un ejemplo tardío, salvo error material de fechas que People documente. El formulario de un cliente usa las escalas que ese cliente configuró, que pueden no coincidir con las de Alba.
+
+## 32. Tiempo y asistencia
+
+Quien tiene fichaje activo registra la jornada en la web o en la aplicación, al empezar y al terminar. Un olvido se corrige en los tres días hábiles siguientes, en Tiempo > Corregir fichaje, con el horario real y un motivo. El responsable revisa las correcciones al cerrar la semana. El cierre de semana se hace el lunes siguiente, antes de las 18:00, hora de Madrid. Después del cierre, una corrección pide a Administración de Personas y queda marcada como tardía.
+
+No se ficha por otra persona. Si dos personas comparten un dispositivo, cada una entra con su cuenta. Las pausas no pagas, cuando el esquema horario las tiene, se registran según la guía del equipo. El calendario laboral del país determina feriados. Esos días no se cargan como vacaciones salvo que la persona igual quiera usar un día de saldo, cosa que el producto no exige.
+
+Si un fichaje no llega a nómina, Soporte revisa si el día estaba cerrado, si la corrección fue aprobada y si el esquema de la persona incluye fichaje. Quien está en un esquema sin fichaje no ve el botón, y eso no es una avería. Cambiar el esquema para forzar el fichaje, sin acuerdo de People, descuadra el recibo. La jornada ordinaria de referencia en España es de cuarenta horas semanales. Otros países usan el calendario de Tiempo > Calendarios. Un fichaje olvidado después de los tres días hábiles no se carga en Corregir fichaje. Pide a Administración de Personas, queda marcado como tardío y puede no entrar en el cierre de esa semana.
+## 33. Trabajo remoto y horario
+
+El esquema de cada persona figura en su perfil: presencial, híbrido o remoto. El híbrido de referencia, cuando el puesto lo permite, son tres días en la oficina del equipo y dos días remotos. Esos días se publican en el calendario compartido para que las reuniones importantes caigan en la franja de solapamiento de al menos tres horas. Cambiar de esquema pide acuerdo del responsable y de People, y el perfil se actualiza antes de que cambie la expectativa de fichaje. Un cambio no retroactivo no reescribe los fichajes ya cerrados.
+
+En remoto, la persona dispone de un espacio adecuado y cumple la guía de ergonomía. El kit se pide en los primeros quince días, como indica la sección de salud y seguridad. Las reuniones se graban solo si quien organiza avisa al inicio y la grabación tiene un fin concreto. Se guarda en la carpeta del equipo, no en una cuenta personal, y se borra cuando deja de hacer falta o, como máximo, a los doce meses.
+
+Fuera de la jornada y de las guardias publicadas se respeta la desconexión. Un mensaje urgente se reserva para un incidente de seguridad, una caída del servicio o una emergencia de personas. El resto espera al siguiente día hábil. La persona de guardia figura en el turno de Operaciones. El complemento usa el código GRD y lo liquida Nómina según la tabla vigente, visible en el recibo del mes en que se hizo la guardia.
+
+## 34. Seguridad de la información en el día a día
+
+El segundo factor es obligatorio en el correo, en la plataforma y en las consolas de administración. Las llaves y los códigos de respaldo se guardan en el gestor aprobado, no en una nota del teléfono personal. Si un dispositivo de Alba se pierde, o si se sospecha que otra persona usó la cuenta, se avisa a seguridad@albapeople.com en el plazo de una hora desde que se conoce. Quien todavía puede entrar inicia el cierre de sesión remoto y no espera al siguiente día hábil.
+
+El phishing se reporta con el botón de la herramienta de correo, sin reenviar el mensaje a otros compañeros. Nadie de Alba pide por teléfono la contraseña, un código de segundo factor ni datos de un tenant. Si alguien los pide, se corta la llamada y se abre un aviso a Seguridad. Las ventanas de mantenimiento se publican en el estado del servicio. Trabajar sobre datos de producción fuera de esas ventanas, en una prueba no autorizada, está prohibido.
+
+Los informes descargados se guardan en el espacio del equipo y se eliminan de la carpeta de descargas local cuando el análisis termina. Un informe con datos de un cliente no se sube a una herramienta que no esté en Tecnología > Catálogo. Seguridad confirma la recepción de un aviso en el mismo día hábil y pide, si hace falta, la hora aproximada y el sistema afectado, no una captura con datos de más.
+
+## 35. Atención de soporte a clientes y plazos internos
+
+Soporte responde cómo se usa Alba. No responde el criterio laboral particular de la empresa cliente cuando ese criterio no está en una política publicada en su tenant. Si el cliente pregunta cuántos días de vacaciones corresponden a su plantilla, la respuesta sale de la política de ese tenant. Si no hay política cargada, se indica que su Administración de Personas debe definirla. No se improvisa un número ni se ofrecen los veintidós días de la plantilla de Alba como si fueran los del cliente.
+
+Los plazos internos de Alba como empleador, como los tres días hábiles para aprobar una ausencia de su propia plantilla, no se presentan como el plazo de todos los clientes. Cada cliente configura sus rutas. Lo que sí es común es la mecánica: solicitud, estado En curso, cancelación solo si sigue en curso, corrección con cantidad en cero o en 0,5 si ya está aprobada, y saldo proyectado con Saldo al.
+
+Un caso que mezcla una falla del producto con una duda de política se parte en dos: un incidente a Producto y una explicación funcional basada en este manual o en la política del tenant. El cliente recibe un solo resumen, con lo que ya se sabe y lo que sigue en investigación. No se promete una fecha de arreglo que Producto no haya confirmado. El identificador AUS- o el de la política se incluye en el incidente para que Producto reproduzca el caso sin pedir de nuevo los datos.
+
+## 36. Salida de la empresa y devolución de accesos
+
+Cuando una persona deja Alba, People coordina la fecha, el último pago y la lista de devolución. El equipo y las tarjetas se entregan en cinco días hábiles. Tecnología cierra las cuentas el último día, al terminar la jornada acordada, salvo un riesgo de seguridad que justifique cerrarlas antes. El cierre incluye correo, plataforma, gestor de contraseñas y accesos a tenants de prueba. Un acceso de las cuatro horas que siguiera abierto se revoca en ese mismo cierre.
+
+Antes de esa fecha la persona descarga, desde Mis recibos, los recibos que quiera conservar. Después del cierre no hay un acceso de cortesía. People puede enviar las copias laborales que la ley obliga a entregar, por el canal que indique Legal. No se llevan listas de clientes, precios ni exportaciones de tenants. El responsable reasigna el mismo día las aprobaciones pendientes, para que ausencias y gastos no queden en una bandeja cerrada.
+
+Si una solicitud sigue a nombre de quien ya salió, Administración de Personas la redirige. No se usa una cuenta compartida para mantener el buzón. Si un buzón de función debe seguir, Tecnología lo convierte en un buzón de equipo con dueños vigentes. El saldo de vacaciones no tomado se liquida solo cuando la ley local lo exige, en el último pago o en el complemento que Nómina calcule. Soporte no adelanta ese importe por chat.
+
+## 37. Formación obligatoria
+
+En los primeros treinta días la persona completa cuatro formaciones breves: código y ética, seguridad de la información, privacidad de datos y, si su puesto trata con administraciones públicas o con contratos, anticorrupción. Cada módulo dura menos de cuarenta minutos y termina con una confirmación. La tarea está en Bandeja > Formación. No reemplaza el reconocimiento de políticas, que sigue siendo un paso distinto. Sin la formación de seguridad, Tecnología puede limitar el alta de herramientas nuevas del catálogo, sin bloquear el correo ni las ausencias.
+
+Cada año, en el mes de aniversario, se renuevan seguridad y ética. People avisa con veintiún días de anticipación. Quien está de licencia en esa ventana recibe la formación al volver, con catorce días corridos de plazo. El vencimiento reiterado sin causa se conversa con el responsable y puede limitar tareas no esenciales, con la misma lógica que el reconocimiento de políticas. El equipo de Soporte completa además el módulo de calidad de respuesta: citar el artículo correcto, no inventar plazos del cliente y escalar cuando el manual no alcanza.
+
+La versión 4.2 de este manual exige volver a leer las secciones de ausencias, de inteligencia artificial y de acceso temporal a tenants. Ese repaso está en el mismo módulo de calidad y queda registrado con fecha. Una respuesta de Soporte que cite un plazo distinto del artículo vigente se corrige en el ticket y se usa como ejemplo del siguiente repaso, sin publicar datos del cliente.
+
+## 38. Escalamiento cuando la respuesta no está en este manual
+
+Si este manual no responde, Soporte no completa el hueco con una suposición. Registra la pregunta, lo que ya revisó y el artículo más cercano. Una duda de interpretación sobre la plantilla de Alba va al People Partner. Una duda legal o de conflicto va a cumplimiento@albapeople.com. Una falla reproducible va a Producto con los pasos, la hora y el identificador, sin datos de más en la captura. El cliente no queda a la espera de un silencio: se le dice qué se escaló y qué dato falta.
+
+Una pregunta sobre el sentido de la política de la empresa cliente se devuelve a la Administración de Personas de ese cliente. Alba explica cómo cargar, asignar y reconocer la política. No redacta la decisión laboral del cliente como si fuera asesoría. Si piden un modelo, se indica la lista de temas que admite el módulo: manuales, código de conducta, seguridad, salud, gastos, trabajo remoto y protección de datos. No se entrega el texto interno de Alba como si fuera la política del cliente.
+
+El caso escalado se actualiza cuando llega la respuesta. Si la misma pregunta apareció tres veces en treinta días, se propone un artículo nuevo o una ampliación de esta versión. Así la base crece con preguntas reales y el turno siguiente no depende de la memoria de una sola persona. Hasta que el artículo exista, la respuesta sigue siendo la de People, Legal o Producto, no una variante inventada en el chat.
