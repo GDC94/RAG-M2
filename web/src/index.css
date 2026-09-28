@@ -2,39 +2,17 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: "Geist Variable", sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
+  --font-mono: "Geist Mono Variable", monospace;
   --color-ring: var(--ring);
-  --color-input: var(--input);
   --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-foreground: var(--foreground);
@@ -48,39 +26,193 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Workbench redesign tokens (phase 1). Named so every color in the new UI
+ * is a Tailwind class (`bg-ink-250`, `text-fg-muted`, `border-accent-1/30`,
+ * `stroke-accent-2`, ...) — never a hex/rgb literal in a component. */
+@theme {
+  --color-ink-0: #000000;
+  --color-ink-50: #0a0a0b;
+  --color-ink-100: #0e0e10;
+  --color-ink-150: #111113;
+  --color-ink-200: #141417;
+  --color-ink-250: #1c1c1f;
+  --color-ink-300: #1e1e22;
+  --color-ink-350: #26262b;
+  --color-ink-400: #2e2e34;
+
+  --color-fg: #ededef;
+  --color-fg-strong: #ffffff;
+  --color-fg-soft: #d4d4d8;
+  --color-fg-muted: #a1a1a8;
+  --color-fg-subtle: #8b8b92;
+  --color-fg-faint: #77777f;
+  --color-fg-ghost: #5e5e66;
+
+  --color-link: #7aa7ff;
+
+  --color-accent-1: #5b8cff;
+  --color-accent-2: #ff6b4a;
+  --color-accent-3: #ffd9c9;
+  --color-accent-4: #4ade80;
+
+  --color-bubble: #232326;
+  --color-bubble-fg: #f4f4f5;
+  --color-avatar-ring: #2a2a2e;
+  --color-tab-active: #232327;
+  --color-divider: #222226;
+  --color-connector: #2a2a30;
+  --color-placeholder: #63636b;
+  --color-shimmer-base: #6e6e76;
+  --color-shimmer-peak: #ffffff;
+  --color-glow: rgba(80, 130, 255, 0.28);
+  --color-star: #facc15;
+  --color-star-soft: #fef08a;
+  --color-spark: rgba(237, 237, 239, 1);
+  /* Near-black thumb: still visible over the pure-black panel (ink-0). */
+  --color-scrollbar-thumb: #1e1e22;
+  --color-scrollbar-thumb-hover: #2e2e34;
+
+  --color-tech-python: #8fb0ff;
+  --color-tech-pydantic: #f29ac8;
+  --color-tech-openai: #7fd8b4;
+  --color-tech-typescript: #7cc0ff;
+  --color-tech-react: #6fd6ea;
+  --color-tech-vite: #b9a2ff;
+  --color-tech-tailwind: #62d2d6;
+  --color-tech-zod: #eabd72;
+  --color-tech-chroma: #f4a36c;
+  --color-tech-fastapi: #a3e07a;
+
+  --color-json-key: #ffd23f;
+  --color-json-string: #c9c9ce;
+  --color-json-number: #8fb3ff;
+  --color-json-punct: #6e6e76;
+
+  --shadow-composer: 0 10px 40px rgba(0, 0, 0, 0.35);
+
+  --ease-layout: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@utility bg-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-shimmer-base) 0%,
+    var(--color-shimmer-peak) 50%,
+    var(--color-shimmer-base) 100%
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@utility animate-shimmer {
+  animation: shimmer 1.8s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility bg-glow {
+  background-image: radial-gradient(ellipse, var(--color-glow), transparent 70%);
+}
+
+/* Edge fades for scroll areas. `--fade-top`/`--fade-bottom` are registered so
+ * the mask length can transition; `useScrollFade` toggles them to
+ * `--spacing-fade` only on the side that has hidden content. */
+@property --fade-top {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --fade-bottom {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@utility mask-fade-y {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black var(--fade-top),
+    black calc(100% - var(--fade-bottom)),
+    transparent 100%
+  );
+  transition:
+    --fade-top 0.25s var(--ease-layout),
+    --fade-bottom 0.25s var(--ease-layout);
+}
+@utility fade-top {
+  --fade-top: 48px;
+}
+@utility fade-bottom {
+  --fade-bottom: 48px;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Global reduced-motion safety net. Most animation in the workbench is
+ * already gated per-component via `motion`'s `useReducedMotion()` (springs,
+ * stagger, blur — see `DoneTurn`, `ShimmerText`, `ClickSpark`, the vendored
+ * `overflow-actions`/`preview-rail`/`agent-disclosure`). This catches the
+ * plain-CSS transitions/animations that aren't: the layout shell's grid
+ * column/sidebar-opacity transition (`WorkbenchLayout`), every
+ * `hover:-translate-y-*`/`hover:scale-*` micro-interaction (`IconButton`,
+ * `PillButton`, `RingCard`, tags, avatars, chips), the score-ring stroke and
+ * timings-gantt bar-width transitions, and the "running" `StepIndicator`
+ * spinner. Opacity-only transitions are left alone (allowed under reduced
+ * motion) by only zeroing duration/iteration, not disabling `transition`
+ * outright. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    /* biome-ignore lint/complexity/noImportantStyles: standard reduced-motion
+     * CSS reset (web.dev/prefers-reduced-motion) — `!important` is required
+     * so this universal selector reliably overrides every component's own
+     * (more specific) `duration-[…]` utility class. */
+    animation-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: see above */
+    animation-iteration-count: 1 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: see above */
+    transition-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: see above */
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Only the shadcn tokens still referenced by the app survive here: `--card`,
+ * `--muted-foreground`, `--border` and `--ring` back the vendored beUI
+ * `preview-rail.tsx` (bg-card/text-card-foreground/text-muted-foreground/
+ * border-border/ring-ring) and the global `@layer base` reset below;
+ * `--background` backs `ring-offset-background`. The rest of the original
+ * shadcn palette (popover, primary, secondary, accent, destructive, input,
+ * chart-*, sidebar-*) has no remaining reference in the workbench UI, which
+ * uses the `ink-*`/`fg-*`/`accent-N` tokens above instead, and was removed. */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
@@ -88,33 +220,9 @@
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
 }
 
 @layer base {
@@ -122,9 +230,30 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-ink-0 text-fg antialiased tracking-[-0.005em];
   }
   html {
     @apply font-sans;
+  }
+  /* Thin, dark scrollbars for every scroll area (chat, panel tabs, sidebar).
+   * `scrollbar-*` covers Firefox and Chromium 121+; the WebKit pseudo-elements
+   * cover Safari. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-scrollbar-thumb);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-scrollbar-thumb-hover);
   }
 }
