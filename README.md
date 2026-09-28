@@ -20,10 +20,11 @@ ejemplos paso a paso y el mapa de dependencias entre módulos.
 
 - Python 3.14
 - Una clave de API de OpenAI (`OPENAI_API_KEY`)
+- Para la interfaz web: Node.js 20+ y `pnpm`
 
 ## Instalación
 
-Con `uv` (recomendado; `uv.lock` fija 94 paquetes):
+Con `uv` (recomendado; `uv.lock` fija 96 paquetes):
 
 ```bash
 uv sync
@@ -40,7 +41,8 @@ cp .env.example .env   # completar OPENAI_API_KEY
 ```
 
 Dependencias fijadas: `openai` 3.19.2, `chromadb` 1.5.9, `tiktoken` 0.14.0,
-`pydantic` 2.13.5, `python-dotenv` 1.2.3, `rich` 15.0.0, `pytest` 9.1.1.
+`pydantic` 2.13.5, `python-dotenv` 1.2.3, `rich` 15.0.0, `fastapi` 0.141.1,
+`uvicorn` 0.54.0, `pytest` 9.1.1, `httpx` 0.28.1 (solo tests).
 
 ## Configuración (`.env`)
 
@@ -83,6 +85,47 @@ python src/query.py "¿Cómo solicito vacaciones?" --pretty
 ```
 
 Con `uv`, anteponer `uv run` a cualquiera de los comandos anteriores.
+
+## Interfaz web
+
+Una interfaz de chat para consultar el manual y ver cómo respondió el RAG.
+Pensada para evaluar el sistema, así que muestra todo lo que devuelve el
+pipeline: fuentes citadas, fragmentos recuperados con su score, veredicto del
+verificador, tiempos por etapa y el JSON crudo.
+
+```bash
+cd web
+pnpm install
+pnpm run bootstrap   # uv sync + build_index (solo la primera vez)
+pnpm dev:all         # API en :8000 y Vite en :5173
+```
+
+Abrir http://localhost:5173. Requiere `OPENAI_API_KEY` en el `.env` de la
+raíz. Cada pregunta llama a OpenAI igual que el CLI.
+
+Cómo está armada:
+
+- **API** (`src/api.py`, FastAPI): otro adaptador delgado sobre
+  `answer_question`, igual que `query.py`. Abre OpenAI y Chroma una sola vez
+  al arrancar.
+  - `POST /api/query` devuelve el mismo `QueryResponse` que el CLI.
+  - `POST /api/query/stream` devuelve NDJSON: un evento por etapa (`embed`,
+    `search`, `generate`, `verify`) al empezar y al terminar, y al final la
+    respuesta completa o un error. La respuesta no se transmite token a token:
+    llega entera después del verificador, así nunca se muestra un texto que el
+    verificador después reemplace.
+  - `GET /api/health`.
+  - Errores con el mismo formato `{"error": {"code", "message"}}`, mapeados a
+    HTTP: `invalid_question`/`invalid_request` 422, `index_empty` 503,
+    `provider_error` 502, `provider_timeout` 504, resto 500.
+- **Front** (`web/`): Vite, React, TypeScript, Tailwind, Biome, Vitest y Zod.
+  Toda respuesta de la API se valida con Zod antes de mostrarse. Cada pregunta
+  es independiente; el historial vive solo en el navegador. Los componentes
+  de chat, input y lista de pasos vienen de [beUI](https://beui.dev) (MIT,
+  ver `web/THIRD_PARTY_NOTICES.md`).
+
+Scripts de `web/`: `pnpm dev` (solo Vite), `pnpm check` (Biome + tsc),
+`pnpm test`, `pnpm build`.
 
 ## Contrato de salida (JSON)
 
@@ -151,6 +194,7 @@ dominio, inyección y política de cliente).
 src/build_index.py       CLI de indexación
 src/query.py             CLI de consulta
 src/evaluate.py          CLI de evaluación (recall, sweep, judge)
+src/api.py               API HTTP (FastAPI) para la interfaz web
 src/rag/
   config.py              Settings, carga de .env
   models.py               modelos Pydantic (Chunk, Answer, QueryResponse, ...)
@@ -170,9 +214,12 @@ data/gold_set.json        lista de examen (26 positivas + 8 negativas)
 data/chromadb/            índice persistente (ignorado por git)
 outputs/*.json            reportes de recall, sweep, juez y ejemplos
 plan.md                   plan detallado y diagnóstico
+web/                      interfaz web (Vite + React)
+  src/features/ask/        esquemas Zod, cliente de la API, hook y componentes
+  src/components/          componentes de beUI (MIT)
 ```
 
-Dirección de dependencias: scripts → `pipeline` → módulos de etapa →
+Dirección de dependencias: scripts y `api.py` → `pipeline` → módulos de etapa →
 `config`/`models`/`errors`. OpenAI y Chroma se inyectan por parámetro;
 ningún módulo los crea internamente.
 
@@ -290,9 +337,17 @@ verdad, y varía entre corridas aun con temperatura 0.
 pytest
 ```
 
-89 tests, deterministas: Chroma corre en memoria y OpenAI se reemplaza por
+113 tests, deterministas: Chroma corre en memoria y OpenAI se reemplaza por
 fakes con la misma forma que el SDK. No hacen llamadas de red ni gastan
-dinero.
+dinero. La API se prueba con el `TestClient` de FastAPI y los mismos fakes.
+
+Front:
+
+```bash
+cd web && pnpm test
+```
+
+81 tests con Vitest y Testing Library; la API se reemplaza por fakes.
 
 ## Límites conocidos
 
@@ -302,8 +357,10 @@ dinero.
   fallar (ver la sección de generación y verificador).
 - La calibración de umbral y `top_k` se hizo sobre 34 preguntas; un corpus
   más grande podría correr valores distintos.
-- Sin concurrencia ni límites por usuario: un operador, una línea de
-  comandos.
+- Sin concurrencia ni límites por usuario: un operador, local. La interfaz
+  web corre en la máquina de quien la levanta, con su propia clave.
+- Si se corta una consulta desde la web (botón de stop), el backend termina
+  igual esa corrida y su costo; solo se descarta el resultado.
 - Sin autenticación, multi-tenant ni rate limiting: alcance de un solo
   operador con una sola clave (ver modelo de amenazas en `plan.md`).
 
@@ -311,7 +368,7 @@ dinero.
 
 Cuando aparezca un segundo usuario, alguien pida acceso sin instalar Python,
 o la factura supere el volumen de un operador solo, el siguiente paso es
-exponer `answer_question` detrás de un endpoint FastAPI (`POST /ask`) con un
-front en React, y agregar entonces autenticación, rate limiting, tope de
-gasto y cache de preguntas repetidas. Con más de un proceso, Chroma pasa a
+publicar la API y el front que ya existen (ver "Interfaz web") y agregar
+entonces autenticación, rate limiting, tope de gasto y cache de preguntas
+repetidas. Con más de un proceso, Chroma pasa a
 modo servidor o a pgvector.
