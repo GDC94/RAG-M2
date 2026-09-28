@@ -1,4 +1,5 @@
 import { type TodoItem, TodoList } from '@/components/agents/todo-list';
+import { formatTimingMilliseconds } from '../formatTiming';
 import type { AnswerStatus, StageName } from '../schemas';
 import type { StageStatus, TurnStages } from '../useAsk';
 
@@ -50,7 +51,7 @@ function detailFor(
   if (skipped?.includes(id)) return 'Omitida';
   const value = timings?.[id];
   if (value === undefined) return undefined;
-  return `${Math.round(value)} ms`;
+  return formatTimingMilliseconds(value);
 }
 
 /**

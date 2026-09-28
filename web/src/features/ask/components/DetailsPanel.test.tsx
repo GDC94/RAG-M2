@@ -100,11 +100,13 @@ describe('DetailsPanel', () => {
       <DetailsPanel
         {...baseProps()}
         open
-        timings={{ total: 900, embed: 100, search: 200, generate: 500, verify: 100, rerank: 50 }}
+        timings={{ total: 0.9, embed: 0.1, search: 0.2, generate: 0.5, verify: 0.1, rerank: 0.05 }}
       />,
     );
     const labels = screen.getAllByTestId('timing-label').map((node) => node.textContent);
     expect(labels).toEqual(['embed', 'search', 'generate', 'verify', 'total', 'rerank']);
+    expect(screen.getByText('500 ms')).toBeInTheDocument();
+    expect(screen.getByText('900 ms')).toBeInTheDocument();
   });
 
   it('shows the raw JSON response', () => {

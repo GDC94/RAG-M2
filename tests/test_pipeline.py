@@ -7,7 +7,7 @@ import openai
 import pytest
 
 from rag.config import load_settings
-from rag.errors import IndexEmptyError, InvalidQuestionError, ProviderError
+from rag.errors import IndexEmptyError, InvalidQuestionError, ProviderError, RequestCancelledError
 from rag.generation import NOT_IN_MANUAL_TEXT, GroundedAnswer
 from rag.index import ChunkIndex
 from rag.models import Chunk
@@ -395,6 +395,37 @@ def test_answer_question_emits_no_verify_event_when_verification_disabled(
         ("generate", "start"),
         ("generate", "end"),
     ]
+
+
+def test_answer_question_stops_before_the_next_stage_when_cancelled(
+    chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk]
+) -> None:
+    settings = load_settings({"OPENAI_API_KEY": "sk-test", "RAG_VERIFY_ANSWER": "false"})
+    index = _index_with_vacation_chunk(chroma_client, make_chunk, settings.embedding_model)
+    embeddings_client = FakeEmbeddingsClient(fixed_vector=[0.9, 0.1, 0.0, 0.0])
+    chat_client = FakeChatClient(
+        GroundedAnswer(status="answered", text="This must not be generated.", sources=[])
+    )
+    client = FakeRagClient(embeddings_client, chat_client)
+    cancelled = False
+
+    def on_stage(stage: str, phase: str) -> None:
+        nonlocal cancelled
+        if (stage, phase) == ("embed", "end"):
+            cancelled = True
+
+    with pytest.raises(RequestCancelledError):
+        answer_question(
+            "¿Cómo solicito vacaciones?",
+            settings,
+            client,
+            index,
+            on_stage=on_stage,
+            is_cancelled=lambda: cancelled,
+        )
+
+    assert embeddings_client.calls == 1
+    assert chat_client.calls == []
 
 
 def test_answer_question_emits_no_verify_event_when_nothing_retrieved(

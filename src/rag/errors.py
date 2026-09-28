@@ -20,6 +20,10 @@ class InvalidQuestionError(RagError):
     code = "invalid_question"
 
 
+class RequestCancelledError(RagError):
+    code = "request_cancelled"
+
+
 class ProviderError(RagError):
     code = "provider_error"
 

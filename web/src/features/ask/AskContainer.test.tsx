@@ -2,7 +2,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { AskContainer } from './AskContainer';
-import type { AskResult } from './api';
+import answeredFixture from './__fixtures__/query-response.answered.json';
+import { askQuestionStream, type AskResult } from './api';
 import type { StageEvent } from './schemas';
 
 function deferred<T>() {
@@ -11,6 +12,27 @@ function deferred<T>() {
     resolve = res;
   });
   return { promise, resolve };
+}
+
+function sharedContractStream() {
+  const raw = [
+    { type: 'stage', stage: 'embed', phase: 'start' },
+    { type: 'stage', stage: 'embed', phase: 'end' },
+    { type: 'stage', stage: 'search', phase: 'start' },
+    { type: 'stage', stage: 'search', phase: 'end' },
+    { type: 'stage', stage: 'generate', phase: 'start' },
+    { type: 'stage', stage: 'generate', phase: 'end' },
+    { type: 'result', data: answeredFixture },
+  ]
+    .map((event) => `${JSON.stringify(event)}\n`)
+    .join('');
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(new TextEncoder().encode(raw));
+      controller.close();
+    },
+  });
+  return { ok: true, status: 200, body } as Response;
 }
 
 const successResult: AskResult = {
@@ -31,11 +53,29 @@ const successResult: AskResult = {
     status: 'answered',
     sources: ['19. Cómo solicitar vacaciones'],
     verification: null,
-    timings: { embed: 10, search: 20, generate: 300 },
+    timings: { embed: 0.01, search: 0.02, generate: 0.3 },
   },
 };
 
 describe('AskContainer', () => {
+  it('renders the shared FastAPI stream contract through Zod, the hook, and the UI', async () => {
+    const user = userEvent.setup();
+    const fetchFn = vi.fn().mockResolvedValue(sharedContractStream());
+    const askFn: typeof askQuestionStream = (question, options) =>
+      askQuestionStream(question, { ...options, fetchFn });
+    render(<AskContainer askFn={askFn} />);
+
+    await user.type(
+      screen.getByRole('textbox', { name: /escrib.* tu pregunta/i }),
+      '¿Cómo solicito vacaciones?',
+    );
+    await user.click(screen.getByRole('button', { name: /enviar/i }));
+
+    expect(await screen.findByText('Respuesta encontrada !')).toBeInTheDocument();
+    expect(screen.getByText('412 ms')).toBeInTheDocument();
+    expect(screen.getByText('Respondida')).toBeInTheDocument();
+  });
+
   it('advances the pipeline stages, then shows the answer with source chips', async () => {
     const user = userEvent.setup();
     const { promise, resolve } = deferred<AskResult>();

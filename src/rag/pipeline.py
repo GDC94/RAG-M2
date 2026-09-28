@@ -4,7 +4,7 @@ from typing import Any
 
 from rag.config import Settings
 from rag.embeddings import embed_texts
-from rag.errors import IndexEmptyError, InvalidQuestionError
+from rag.errors import IndexEmptyError, InvalidQuestionError, RequestCancelledError
 from rag.generation import NOT_IN_MANUAL_TEXT, generate
 from rag.index import ChunkIndex
 from rag.ingestion import split_manual
@@ -48,6 +48,7 @@ def answer_question(
     client: Any,
     index: ChunkIndex,
     on_stage: Callable[[str, str], None] | None = None,
+    is_cancelled: Callable[[], bool] | None = None,
 ) -> QueryResponse:
     """Validate, embed, retrieve, and generate a grounded answer for a question.
 
@@ -71,20 +72,27 @@ def answer_question(
         if on_stage is not None:
             on_stage(stage, phase)
 
+    def _raise_if_cancelled() -> None:
+        if is_cancelled is not None and is_cancelled():
+            raise RequestCancelledError("The request was cancelled")
+
     total_start = time.perf_counter()
 
+    _raise_if_cancelled()
     _emit("embed", "start")
     embed_start = time.perf_counter()
     vector = embed_texts(client, settings.embedding_model, [cleaned])[0]
     embed_seconds = time.perf_counter() - embed_start
     _emit("embed", "end")
 
+    _raise_if_cancelled()
     _emit("search", "start")
     search_start = time.perf_counter()
     retrieved = index.search(vector, settings.top_k, settings.similarity_threshold)
     search_seconds = time.perf_counter() - search_start
     _emit("search", "end")
 
+    _raise_if_cancelled()
     _emit("generate", "start")
     generate_start = time.perf_counter()
     answer = generate(client, settings, cleaned, retrieved)
@@ -99,6 +107,7 @@ def answer_question(
 
     verdict: Verdict | None = None
     if settings.verify_answer and retrieved:
+        _raise_if_cancelled()
         _emit("verify", "start")
         verify_start = time.perf_counter()
         verdict = verify(client, settings, cleaned, retrieved, answer)

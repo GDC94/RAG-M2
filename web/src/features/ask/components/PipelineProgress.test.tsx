@@ -54,7 +54,7 @@ describe('PipelineProgress', () => {
           generate: 'completed',
           verify: 'completed',
         }}
-        timings={{ embed: 42, search: 108.6, generate: 412, verify: 90 }}
+        timings={{ embed: 0.042, search: 0.1086, generate: 0.412, verify: 0.09 }}
       />,
     );
 

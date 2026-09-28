@@ -64,6 +64,7 @@ variables tiene un valor por defecto (un valor vacío usa el default):
 | `RAG_MAX_CHUNK_TOKENS` | `800` | red de seguridad del chunking |
 | `RAG_CHUNK_OVERLAP_RATIO` | `0.15` | solapamiento si una sección excede el tope |
 | `RAG_MAX_QUESTION_CHARS` | `1000` | largo máximo de la pregunta |
+| `RAG_MAX_CONCURRENT_STREAMS` | `4` | consultas NDJSON activas antes de responder `503` |
 | `RAG_JUDGE_MODEL` | `gpt-4.1-mini` | modelo del verificador y del juez |
 | `RAG_VERIFY_ANSWER` | `true` | activa el verificador inline |
 | `RAG_DEBUG` | `false` | imprime tiempos por etapa en stderr |

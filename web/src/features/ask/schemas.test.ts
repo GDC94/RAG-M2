@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import answeredFixture from './__fixtures__/query-response.answered.json';
 import notInManualFixture from './__fixtures__/query-response.not-in-manual.json';
-import { ApiErrorSchema, QueryResponseSchema, StreamEventSchema } from './schemas';
+import { ApiErrorSchema, KNOWN_ERROR_CODES, QueryResponseSchema, StreamEventSchema } from './schemas';
 
 describe('QueryResponseSchema', () => {
   it('accepts a real answered response and defaults missing sources to []', () => {
@@ -76,6 +76,11 @@ describe('QueryResponseSchema', () => {
 });
 
 describe('ApiErrorSchema', () => {
+  it('documents the stream lifecycle errors emitted by FastAPI', () => {
+    expect(KNOWN_ERROR_CODES).toContain('stream_busy');
+    expect(KNOWN_ERROR_CODES).toContain('request_cancelled');
+  });
+
   it('parses a known error envelope', () => {
     const result = ApiErrorSchema.safeParse({
       error: { code: 'invalid_question', message: 'Question must not be empty' },

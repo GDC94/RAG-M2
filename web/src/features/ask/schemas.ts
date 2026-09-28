@@ -46,6 +46,8 @@ export const KNOWN_ERROR_CODES = [
   'index_model_mismatch',
   'provider_error',
   'provider_timeout',
+  'request_cancelled',
+  'stream_busy',
 ] as const;
 
 export type KnownErrorCode = (typeof KNOWN_ERROR_CODES)[number];

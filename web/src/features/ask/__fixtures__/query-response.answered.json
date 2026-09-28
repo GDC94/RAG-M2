@@ -20,5 +20,11 @@
     }
   ],
   "status": "answered",
-  "verification": null
+  "verification": null,
+  "timings": {
+    "embed": 0.042,
+    "search": 0.109,
+    "generate": 0.412,
+    "total": 0.563
+  }
 }

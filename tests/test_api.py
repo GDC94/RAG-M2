@@ -1,17 +1,25 @@
+import asyncio
 import json
+import threading
 import uuid
 from collections.abc import Callable
+from pathlib import Path
+from types import SimpleNamespace
 
 import chromadb
 import httpx
 import openai
+import pytest
 from fastapi.testclient import TestClient
 
+import api
 from api import create_app
 from rag.config import load_settings
+from rag.errors import RequestCancelledError
 from rag.generation import GroundedAnswer
 from rag.index import ChunkIndex
 from rag.models import Chunk
+import rag.pipeline as pipeline_module
 from tests.conftest import FakeChatClient, FakeEmbeddingsClient, FakeRagClient, RaisingClient
 
 
@@ -138,6 +146,110 @@ def test_query_stream_happy_path_returns_stage_events_then_result(
         "sources",
         "verification",
         "timings",
+    }
+
+
+def test_query_stream_uses_the_shared_frontend_timing_contract(
+    chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk], monkeypatch
+) -> None:
+    settings = load_settings(
+        {"OPENAI_API_KEY": "sk-test", "RAG_VERIFY_ANSWER": "false"}
+    )
+    index = _index_with_vacation_chunk(chroma_client, make_chunk, settings.embedding_model)
+    client = FakeRagClient(
+        FakeEmbeddingsClient(fixed_vector=[0.9, 0.1, 0.0, 0.0]),
+        FakeChatClient(
+            GroundedAnswer(
+                status="answered",
+                text="Desde Ausencias > Nueva solicitud.",
+                sources=["19. Cómo solicitar vacaciones"],
+            )
+        ),
+    )
+    clock = iter([0.0, 0.0, 0.042, 0.042, 0.151, 0.151, 0.563, 0.563])
+    monkeypatch.setattr(pipeline_module, "time", SimpleNamespace(perf_counter=lambda: next(clock)))
+    contract_path = (
+        Path(__file__).parents[1]
+        / "web/src/features/ask/__fixtures__/query-response.answered.json"
+    )
+    frontend_contract = json.loads(contract_path.read_text())
+    app = create_app(settings, client, index)
+
+    with TestClient(app) as test_client:
+        response = test_client.post(
+            "/api/query/stream", json={"question": "¿Cómo solicito vacaciones?"}
+        )
+
+    final = _parse_ndjson(response.text)[-1]
+    assert final["data"]["timings"] == pytest.approx(frontend_contract["timings"])
+
+
+def test_stream_closure_cancels_the_worker_before_the_next_stage(monkeypatch) -> None:
+    cancellation_seen = threading.Event()
+    worker_finished = threading.Event()
+
+    def fake_answer_question(
+        question, settings, client, index, on_stage=None, is_cancelled=None
+    ) -> None:
+        assert on_stage is not None
+        assert is_cancelled is not None
+        on_stage("embed", "start")
+        try:
+            while not is_cancelled():
+                cancellation_seen.wait(0.01)
+            cancellation_seen.set()
+            raise RequestCancelledError("The request was cancelled")
+        finally:
+            worker_finished.set()
+
+    monkeypatch.setattr(api, "answer_question", fake_answer_question)
+
+    class DisconnectingRequest:
+        disconnected = False
+
+        async def is_disconnected(self) -> bool:
+            return self.disconnected
+
+    request = DisconnectingRequest()
+
+    async def consume_until_disconnect() -> None:
+        events = api._stream_query_events(
+            "question", settings=None, client=None, index=None, request=request
+        )
+        assert json.loads(await anext(events)) == {
+            "type": "stage",
+            "stage": "embed",
+            "phase": "start",
+        }
+        request.disconnected = True
+        with pytest.raises(StopAsyncIteration):
+            await anext(events)
+
+    asyncio.run(consume_until_disconnect())
+
+    assert cancellation_seen.wait(1)
+    assert worker_finished.wait(1)
+
+
+def test_query_stream_returns_503_when_all_worker_slots_are_busy(
+    chroma_client: chromadb.ClientAPI,
+) -> None:
+    settings = load_settings(
+        {"OPENAI_API_KEY": "sk-test", "RAG_MAX_CONCURRENT_STREAMS": "1"}
+    )
+    index = ChunkIndex.open(chroma_client, str(uuid.uuid4()), settings.embedding_model)
+    app = create_app(settings, FakeEmbeddingsClient(), index)
+    assert app.state.stream_limiter.acquire(blocking=False)
+
+    try:
+        with TestClient(app) as test_client:
+            response = test_client.post("/api/query/stream", json={"question": "hola"})
+    finally:
+        app.state.stream_limiter.release()
+
+    assert response.status_code == 503
+    assert response.json() == {
+        "error": {"code": "stream_busy", "message": "Too many active requests"}
     }
 
 

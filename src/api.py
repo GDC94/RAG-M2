@@ -1,9 +1,10 @@
+import asyncio
 import json
 import os
 import queue
 import sys
 import threading
-from collections.abc import AsyncIterator, Iterator
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
@@ -14,12 +15,12 @@ import chromadb
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel
 
 from rag.client import create_client
 from rag.config import Settings, load_settings
-from rag.errors import RagError
+from rag.errors import RagError, RequestCancelledError
 from rag.index import ChunkIndex
 from rag.models import QueryResponse
 from rag.pipeline import answer_question
@@ -52,9 +53,14 @@ def _validation_message(exc: RequestValidationError) -> str:
     return "; ".join(parts)
 
 
-def _stream_query_events(
-    question: str, settings: Settings, client: Any, index: ChunkIndex
-) -> Iterator[str]:
+async def _stream_query_events(
+    question: str,
+    settings: Settings,
+    client: Any,
+    index: ChunkIndex,
+    request: Request,
+    limiter: threading.BoundedSemaphore | None = None,
+) -> AsyncIterator[str]:
     """Run `answer_question` in a worker thread, yielding one ndjson line per event.
 
     Stage events are pushed to a queue as they happen so the generator can
@@ -62,14 +68,30 @@ def _stream_query_events(
     "result" or "error" event, after which the generator stops.
     """
     events: queue.Queue[dict[str, Any]] = queue.Queue()
+    cancellation = threading.Event()
 
     def on_stage(stage: str, phase: str) -> None:
         events.put({"type": "stage", "stage": stage, "phase": phase})
 
     def run() -> None:
         try:
-            response = answer_question(question, settings, client, index, on_stage=on_stage)
+            response = answer_question(
+                question,
+                settings,
+                client,
+                index,
+                on_stage=on_stage,
+                is_cancelled=cancellation.is_set,
+            )
             events.put({"type": "result", "data": response.model_dump(mode="json")})
+        except RequestCancelledError:
+            if not cancellation.is_set():
+                events.put(
+                    {
+                        "type": "error",
+                        "error": {"code": "request_cancelled", "message": "Request cancelled"},
+                    }
+                )
         except RagError as exc:
             events.put({"type": "error", "error": exc.to_json()["error"]})
         except Exception:
@@ -79,15 +101,28 @@ def _stream_query_events(
                     "error": {"code": "internal_error", "message": "Unexpected server error"},
                 }
             )
+        finally:
+            if limiter is not None:
+                limiter.release()
 
     thread = threading.Thread(target=run, daemon=True)
     thread.start()
 
-    while True:
-        event = events.get()
-        yield json.dumps(event, ensure_ascii=False) + "\n"
-        if event["type"] in ("result", "error"):
-            break
+    try:
+        while True:
+            try:
+                event = events.get_nowait()
+            except queue.Empty:
+                if await request.is_disconnected():
+                    cancellation.set()
+                    return
+                await asyncio.sleep(0.01)
+                continue
+            yield json.dumps(event, ensure_ascii=False) + "\n"
+            if event["type"] in ("result", "error"):
+                break
+    finally:
+        cancellation.set()
 
 
 def create_app(
@@ -107,6 +142,9 @@ def create_app(
     app.state.settings = settings
     app.state.client = client
     app.state.index = index
+    app.state.stream_limiter = (
+        threading.BoundedSemaphore(settings.max_concurrent_streams) if settings is not None else None
+    )
 
     @app.get("/api/health")
     def health() -> dict[str, str]:
@@ -122,13 +160,21 @@ def create_app(
         )
 
     @app.post("/api/query/stream")
-    def query_stream(payload: QueryRequest, request: Request) -> StreamingResponse:
+    def query_stream(payload: QueryRequest, request: Request) -> Response:
+        limiter = request.app.state.stream_limiter
+        if limiter is None or not limiter.acquire(blocking=False):
+            return JSONResponse(
+                {"error": {"code": "stream_busy", "message": "Too many active requests"}},
+                status_code=503,
+            )
         return StreamingResponse(
             _stream_query_events(
                 payload.question,
                 request.app.state.settings,
                 request.app.state.client,
                 request.app.state.index,
+                request,
+                limiter,
             ),
             media_type="application/x-ndjson",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
@@ -157,6 +203,7 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.settings = settings
     app.state.client = client
     app.state.index = index
+    app.state.stream_limiter = threading.BoundedSemaphore(settings.max_concurrent_streams)
     yield
 
 

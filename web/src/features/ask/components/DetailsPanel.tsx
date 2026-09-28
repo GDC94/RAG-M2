@@ -2,6 +2,7 @@ import { ChevronDown } from 'lucide-react';
 import { useEffect, useId, useState } from 'react';
 import { MessageBubbleCollapsible } from '@/components/agents/message';
 import { cn } from '@/lib/utils';
+import { formatTimingMilliseconds } from '../formatTiming';
 import type { RelatedChunk, Verdict } from '../schemas';
 
 export interface DetailsPanelProps {
@@ -178,7 +179,9 @@ export function DetailsPanel({
                           }}
                         />
                       </div>
-                      <span className="text-muted-foreground tabular-nums">{value} ms</span>
+                      <span className="text-muted-foreground tabular-nums">
+                        {formatTimingMilliseconds(value)}
+                      </span>
                     </li>
                   );
                 })}

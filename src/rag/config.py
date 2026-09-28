@@ -22,6 +22,7 @@ class Settings(BaseModel):
     max_chunk_tokens: int = Field(default=800, gt=0)
     chunk_overlap_ratio: float = Field(default=0.15, ge=0, lt=1)
     max_question_chars: int = Field(default=1000, gt=0)
+    max_concurrent_streams: int = Field(default=4, gt=0)
     judge_model: str | None = "gpt-4.1-mini"
     verify_answer: bool = True
     debug: bool = False
@@ -69,6 +70,7 @@ _INT_FIELDS = {
     "RAG_TOP_K": "top_k",
     "RAG_MAX_CHUNK_TOKENS": "max_chunk_tokens",
     "RAG_MAX_QUESTION_CHARS": "max_question_chars",
+    "RAG_MAX_CONCURRENT_STREAMS": "max_concurrent_streams",
 }
 _BOOL_FIELDS = {
     "RAG_VERIFY_ANSWER": "verify_answer",
