@@ -1,0 +1,24 @@
+{
+  "user_question": "¿Cómo solicito vacaciones y con cuánta anticipación tengo que pedirlas?",
+  "system_answer": "Para solicitar vacaciones, debes ir a Inicio, Ausencias, Solicitar ausencia. Si la ausencia dura tres días hábiles o más, debes solicitarla con al menos diez días hábiles de anticipación. Para ausencias de uno o dos días, se deben pedir con la mayor anticipación posible, y como mínimo, antes del inicio del turno del primer día, salvo en caso de urgencia.",
+  "chunks_related": [
+    {
+      "chunk_id": "alba-manual::19",
+      "doc_id": "alba-manual",
+      "version": "4.2",
+      "section_title": "19. Cómo solicitar vacaciones",
+      "score": 0.6923636198043823,
+      "text": "## 19. Cómo solicitar vacaciones\n\nLa plantilla de Alba tiene veintidós días hábiles de vacaciones por año calendario, que se devengan a razón de 1,83 días por mes cumplido."
+    },
+    {
+      "chunk_id": "alba-manual::22",
+      "doc_id": "alba-manual",
+      "version": "4.2",
+      "section_title": "22. Licencias por enfermedad y licencias parentales",
+      "score": 0.565451443195133,
+      "text": "## 22. Licencias por enfermedad y licencias parentales\n\nSi la persona no puede trabajar por enfermedad, avisa a su responsable antes del inicio del turno."
+    }
+  ],
+  "status": "answered",
+  "verification": null
+}

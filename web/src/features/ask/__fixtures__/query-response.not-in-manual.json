@@ -1,0 +1,9 @@
+{
+  "user_question": "¿Cuál es la política de vacaciones de la competencia?",
+  "system_answer": "No encuentro esa información en el manual de Alba.",
+  "chunks_related": [],
+  "status": "not_in_manual",
+  "sources": [],
+  "verification": null,
+  "timings": null
+}
