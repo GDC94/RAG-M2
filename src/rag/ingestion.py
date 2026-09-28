@@ -196,27 +196,52 @@ def _split_oversized_section(
     body_start_abs = body_start + lead_len
     body = body_full[lead_len:]
 
-    paragraphs = _split_paragraphs(body)
-    pieces = _group_into_pieces(paragraphs, max_tokens)
-
     overlap_token_count = round(max_tokens * overlap_ratio)
     encoder = _get_encoder()
     prev_piece_body: str | None = None
     result: list[tuple[int, int, str]] = []
 
-    for piece_start_local, piece_end_local in pieces:
+    header_prefix = header_line + "\n\n"
+    paragraph_ends = [end for _, _, end in _split_paragraphs(body)]
+    piece_start_local = 0
+
+    while piece_start_local < len(body):
+        overlap_text = ""
+        if prev_piece_body is not None and overlap_token_count > 0:
+            previous_tokens = encoder.encode(prev_piece_body)
+            for overlap_size in range(min(overlap_token_count, len(previous_tokens)), -1, -1):
+                overlap_tokens = previous_tokens[-overlap_size:] if overlap_size else []
+                candidate_overlap = encoder.decode(overlap_tokens)
+                if _count_tokens(header_prefix + candidate_overlap) < max_tokens:
+                    overlap_text = candidate_overlap
+                    break
+
+        prefix = header_prefix + overlap_text
+        candidate_ends = [end for end in paragraph_ends if end > piece_start_local]
+        piece_end_local = max(
+            (
+                end
+                for end in candidate_ends
+                if _count_tokens(prefix + body[piece_start_local:end]) <= max_tokens
+            ),
+            default=piece_start_local,
+        )
+
+        if piece_end_local == piece_start_local:
+            for end in range(piece_start_local + 1, len(body) + 1):
+                if _count_tokens(prefix + body[piece_start_local:end]) > max_tokens:
+                    break
+                piece_end_local = end
+
+        if piece_end_local == piece_start_local:
+            raise IngestionError("RAG_MAX_CHUNK_TOKENS is too small for the section header")
+
         piece_char_start = body_start_abs + piece_start_local
         piece_char_end = body_start_abs + piece_end_local
-        piece_body_text = text[piece_char_start:piece_char_end]
-
-        if prev_piece_body is None or overlap_token_count <= 0:
-            overlap_text = ""
-        else:
-            overlap_tokens = encoder.encode(prev_piece_body)[-overlap_token_count:]
-            overlap_text = encoder.decode(overlap_tokens)
-
-        piece_text = header_line + "\n\n" + overlap_text + piece_body_text
+        piece_body_text = body[piece_start_local:piece_end_local]
+        piece_text = prefix + piece_body_text
         result.append((piece_char_start, piece_char_end, piece_text))
         prev_piece_body = piece_body_text
+        piece_start_local = piece_end_local
 
     return result

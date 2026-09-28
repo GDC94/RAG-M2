@@ -111,6 +111,7 @@ def test_split_manual_splits_oversized_section_into_multiple_pieces_with_overlap
 
     assert len(section_chunks) > 1
     assert all(c.section_title == "1. Seccion larga" for c in section_chunks)
+    assert all(chunk.token_count <= max_tokens for chunk in section_chunks)
 
     first, second = section_chunks[0], section_chunks[1]
     assert second.text.startswith("## 1. Seccion larga\n\n")

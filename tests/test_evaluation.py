@@ -267,6 +267,12 @@ def test_judge_without_judge_model_raises_config_error() -> None:
     assert chat_client.calls == []
 
 
+@pytest.mark.parametrize("score", [-1, 11])
+def test_judge_output_rejects_scores_outside_the_required_range(score: int) -> None:
+    with pytest.raises(ValueError, match="score"):
+        JudgeOutput(score=score, justification="x")
+
+
 def test_judge_gold_set_scores_positives_and_negatives(
     chroma_client: chromadb.ClientAPI, make_chunk: Callable[..., Chunk]
 ) -> None:
@@ -324,7 +330,11 @@ def test_judge_gold_set_scores_positives_and_negatives(
     assert report.mean_score == 9.5
     assert report.mean_score_positives == 9.0
     assert report.mean_score_negatives == 10.0
+    assert report.positives_status_ok == 1
     assert report.negatives_status_ok == 1
-    assert report.cases[0].status_ok is None
+    assert report.cases[0].expected_status == "answered"
+    assert report.cases[0].status_ok is True
+    assert report.cases[0].system_answer == "Desde Ausencias > Nueva solicitud."
+    assert report.cases[0].sources == ["19. Cómo solicitar vacaciones"]
     assert report.cases[1].status_ok is True
     assert report.estimated_input_tokens > 0

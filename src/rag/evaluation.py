@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 
 import tiktoken
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 
 from rag.client import provider_call
 from rag.config import Settings
@@ -25,6 +25,7 @@ from rag.models import (
     SweepRow,
 )
 from rag.pipeline import answer_question
+from rag.verification import VERIFIER_PROMPT
 
 _encoder: tiktoken.Encoding | None = None
 
@@ -66,7 +67,7 @@ Devolvé un score entero de 0 a 10 y una justificación breve."""
 
 
 class JudgeOutput(BaseModel):
-    score: int
+    score: int = Field(ge=0, le=10)
     justification: str
 
 
@@ -258,10 +259,34 @@ def _judge_case(
     if expected_status is not None:
         status_ok = response.status == expected_status
 
-    estimated_input_tokens = estimate_tokens(
-        [SYSTEM_PROMPT, question] + [chunk.text for chunk in response.chunks_related]
+    sources_block = "\n\n".join(
+        f"[Fuente: {chunk.section_title}]\n{chunk.text}"
+        for chunk in response.chunks_related
     )
-    estimated_output_tokens = estimate_tokens([response.system_answer])
+    generation_message = (
+        f"Pregunta no confiable:\n{question}\n\nFuentes no confiables:\n\n{sources_block}"
+    )
+    judge_message = (
+        f"Pregunta del usuario:\n{response.user_question}\n\n"
+        f"Respuesta del sistema:\n{response.system_answer}\n\n"
+        "Fragmentos relacionados:\n\n"
+        + sources_block
+    )
+    estimated_input_tokens = estimate_tokens(
+        [SYSTEM_PROMPT, generation_message, JUDGE_PROMPT, judge_message]
+    )
+    estimated_output_tokens = estimate_tokens(
+        [response.system_answer, str(evaluation.score), evaluation.justification]
+    )
+    if response.verification is not None:
+        verifier_message = (
+            f"{generation_message}\n\nRespuesta a verificar "
+            f"(status={response.status}):\n{response.system_answer}"
+        )
+        estimated_input_tokens += estimate_tokens([VERIFIER_PROMPT, verifier_message])
+        estimated_output_tokens += estimate_tokens(
+            [response.verification.label, response.verification.reason]
+        )
 
     return JudgedCase(
         id=case_id,
@@ -273,6 +298,9 @@ def _judge_case(
         score=evaluation.score,
         justification=evaluation.justification,
         sections=[chunk.section_title for chunk in response.chunks_related],
+        sources=response.sources,
+        system_answer=response.system_answer,
+        verification=response.verification,
         elapsed_seconds=elapsed,
         estimated_input_tokens=estimated_input_tokens,
         estimated_output_tokens=estimated_output_tokens,
@@ -296,7 +324,7 @@ def judge_gold_set(
                 case_id=positive.id,
                 category=positive.category,
                 question=positive.question,
-                expected_status=None,
+                expected_status="answered",
                 settings=settings,
                 client=client,
                 index=index,
@@ -318,9 +346,11 @@ def judge_gold_set(
     total_elapsed_seconds = time.perf_counter() - start
     total = len(cases)
     mean_score = _mean([case.score for case in cases])
-    mean_score_positives = _mean([case.score for case in cases if case.expected_status is None])
-    mean_score_negatives = _mean([case.score for case in cases if case.expected_status is not None])
-    negatives_status_ok = sum(1 for case in cases if case.status_ok is True)
+    positive_cases = cases[: len(gold.positives)]
+    negative_cases = cases[len(gold.positives) :]
+    mean_score_positives = _mean([case.score for case in positive_cases])
+    mean_score_negatives = _mean([case.score for case in negative_cases])
+    negatives_status_ok = sum(1 for case in negative_cases if case.status_ok is True)
 
     return JudgeReport(
         judge_model=settings.judge_model or "",
@@ -330,6 +360,8 @@ def judge_gold_set(
         mean_score=mean_score,
         mean_score_positives=mean_score_positives,
         mean_score_negatives=mean_score_negatives,
+        positives_total=len(gold.positives),
+        positives_status_ok=sum(1 for case in positive_cases if case.status_ok is True),
         negatives_total=len(gold.negatives),
         negatives_status_ok=negatives_status_ok,
         cases=cases,

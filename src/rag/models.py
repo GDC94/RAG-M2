@@ -64,6 +64,7 @@ class QueryResponse(BaseModel):
     system_answer: str
     chunks_related: list[RelatedChunk]
     status: AnswerStatus
+    sources: list[str] = []
     verification: Verdict | None = None
     timings: dict[str, float] | None = None
 
@@ -139,6 +140,9 @@ class JudgedCase(BaseModel):
     score: int
     justification: str
     sections: list[str]
+    sources: list[str]
+    system_answer: str
+    verification: Verdict | None
     elapsed_seconds: float
     estimated_input_tokens: int
     estimated_output_tokens: int
@@ -152,6 +156,8 @@ class JudgeReport(BaseModel):
     mean_score: float
     mean_score_positives: float
     mean_score_negatives: float
+    positives_total: int
+    positives_status_ok: int
     negatives_total: int
     negatives_status_ok: int
     cases: list[JudgedCase]

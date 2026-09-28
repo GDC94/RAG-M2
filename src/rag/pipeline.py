@@ -102,6 +102,7 @@ def answer_question(
         system_answer=answer.text,
         chunks_related=chunks_related,
         status=answer.status,
+        sources=answer.sources,
         verification=verdict,
         timings=timings,
     )

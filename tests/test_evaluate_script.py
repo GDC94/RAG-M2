@@ -16,6 +16,16 @@ def test_main_recall_fails_fast_on_missing_config(
     assert payload["error"]["code"] == "config_error"
 
 
+def test_main_sweep_rejects_malformed_thresholds_before_loading_config(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    exit_code = evaluate.main(["sweep", "--thresholds", "nope"], environ={})
+
+    assert exit_code == 1
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["error"]["code"] == "invalid_arguments"
+
+
 def test_main_judge_fails_fast_on_empty_index(
     capsys: pytest.CaptureFixture[str], tmp_path
 ) -> None:

@@ -130,6 +130,7 @@ def test_answer_question_returns_answered_response_with_related_chunks(
     assert response.user_question == "¿Cómo solicito vacaciones?"
     assert response.system_answer == "Desde Ausencias > Nueva solicitud."
     assert response.status == "answered"
+    assert response.sources == ["19. Cómo solicitar vacaciones"]
     assert response.chunks_related[0].section_title == "19. Cómo solicitar vacaciones"
     assert 0 <= response.chunks_related[0].score <= 1
     assert list(response.model_dump().keys()) == [
@@ -137,6 +138,7 @@ def test_answer_question_returns_answered_response_with_related_chunks(
         "system_answer",
         "chunks_related",
         "status",
+        "sources",
         "verification",
         "timings",
     ]

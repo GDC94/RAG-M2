@@ -51,6 +51,7 @@ def main(argv: list[str], environ: Mapping[str, str] | None = None) -> int:
 
     recall_parser = subparsers.add_parser("recall")
     recall_parser.add_argument("--gold", default="data/gold_set.json")
+    recall_parser.add_argument("--out", default=None)
 
     sweep_parser = subparsers.add_parser("sweep")
     sweep_parser.add_argument("--gold", default="data/gold_set.json")
@@ -58,6 +59,7 @@ def main(argv: list[str], environ: Mapping[str, str] | None = None) -> int:
     sweep_parser.add_argument(
         "--thresholds", default="0.30,0.35,0.40,0.45,0.50,0.55,0.60"
     )
+    sweep_parser.add_argument("--out", default=None)
 
     judge_parser = subparsers.add_parser("judge")
     judge_parser.add_argument("--gold", default="data/gold_set.json")
@@ -66,6 +68,17 @@ def main(argv: list[str], environ: Mapping[str, str] | None = None) -> int:
     args = parser.parse_args(argv)
     command: str = str(args.command)
     gold_path: str = str(args.gold)
+    out_path: str | None = args.out
+
+    try:
+        top_ks = _parse_int_list(str(args.top_k)) if command == "sweep" else []
+        thresholds = _parse_float_list(str(args.thresholds)) if command == "sweep" else []
+    except ValueError as exc:
+        print(
+            json.dumps({"error": {"code": "invalid_arguments", "message": str(exc)}}),
+            file=sys.stdout,
+        )
+        return 1
 
     if environ is None:
         load_dotenv()
@@ -86,7 +99,6 @@ def main(argv: list[str], environ: Mapping[str, str] | None = None) -> int:
             judge_report = judge_gold_set(gold, settings, client, index)
             output = judge_report.model_dump_json(indent=2)
             print(output)
-            out_path: str | None = args.out
             if out_path:
                 Path(out_path).write_text(output, encoding="utf-8")
         else:
@@ -103,14 +115,18 @@ def main(argv: list[str], environ: Mapping[str, str] | None = None) -> int:
                     settings.top_k,
                     settings.similarity_threshold,
                 )
-                print(report.model_dump_json(indent=2))
+                output = report.model_dump_json(indent=2)
+                print(output)
+                if out_path:
+                    Path(out_path).write_text(output, encoding="utf-8")
             else:
-                top_ks = _parse_int_list(str(args.top_k))
-                thresholds = _parse_float_list(str(args.thresholds))
                 rows = sweep(
                     gold, positive_vectors, negative_vectors, index, top_ks, thresholds
                 )
-                print(json.dumps([row.model_dump() for row in rows], indent=2))
+                output = json.dumps([row.model_dump() for row in rows], indent=2)
+                print(output)
+                if out_path:
+                    Path(out_path).write_text(output, encoding="utf-8")
     except RagError as exc:
         print(json.dumps(exc.to_json(), ensure_ascii=False), file=sys.stdout)
         return 1
