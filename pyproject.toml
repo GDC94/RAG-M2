@@ -11,10 +11,13 @@ dependencies = [
     "pydantic==2.13.5",
     "python-dotenv==1.2.3",
     "rich==15.0.0",
+    "fastapi==0.141.1",
+    "uvicorn[standard]==0.54.0",
 ]
 
 [dependency-groups]
 dev = [
+    "httpx==0.28.1",
     "pytest==9.1.1",
 ]
 
