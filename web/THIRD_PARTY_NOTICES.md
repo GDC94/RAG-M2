@@ -9,25 +9,11 @@ and `src/lib/` are adapted from [beUI](https://beui.dev)
 (https://github.com/starc007/ui-components), distributed under the MIT
 License:
 
-- `src/components/agents/message.tsx`
-- `src/components/agents/message-bubble.tsx`
-- `src/components/agents/message-context.tsx`
+- `src/components/agents/citations.tsx`
 - `src/components/agents/message-scroller.tsx`
-- `src/components/motion/preview-rail.tsx`
-- `src/components/agents/prompt-input.tsx`
-- `src/components/agents/todo-list.tsx`
 - `src/components/agents/agent-disclosure.tsx`
-- `src/components/motion/button/index.tsx`
-- `src/components/motion/button/base.tsx`
-- `src/components/motion/button/magnetic.tsx`
-- `src/components/motion/button/metallic.tsx`
-- `src/components/motion/button/stateful.tsx`
-- `src/components/motion/popover-morph.tsx`
-- `src/components/motion/popover-position.ts`
-- `src/components/motion/select.tsx`
-- `src/components/motion/magnetic.tsx`
-- `src/components/motion/action-swap-roll.tsx`
-- `src/components/motion/action-swap.tsx`
+- `src/components/motion/preview-rail.tsx`
+- `src/components/motion/overflow-actions.tsx`
 - `src/lib/ease.ts`
 - `src/lib/touch.ts`
 - `src/lib/utils.ts`

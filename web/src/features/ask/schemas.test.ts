@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import answeredFixture from './__fixtures__/query-response.answered.json';
 import notInManualFixture from './__fixtures__/query-response.not-in-manual.json';
-import { ApiErrorSchema, KNOWN_ERROR_CODES, QueryResponseSchema, StreamEventSchema } from './schemas';
+import {
+  ApiErrorSchema,
+  KNOWN_ERROR_CODES,
+  QueryResponseSchema,
+  StreamEventSchema,
+} from './schemas';
 
 describe('QueryResponseSchema', () => {
   it('accepts a real answered response and defaults missing sources to []', () => {
