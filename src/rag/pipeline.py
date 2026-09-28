@@ -1,4 +1,5 @@
 import time
+from collections.abc import Callable
 from typing import Any
 
 from rag.config import Settings
@@ -42,9 +43,20 @@ def build_index(
 
 
 def answer_question(
-    question: str, settings: Settings, client: Any, index: ChunkIndex
+    question: str,
+    settings: Settings,
+    client: Any,
+    index: ChunkIndex,
+    on_stage: Callable[[str, str], None] | None = None,
 ) -> QueryResponse:
-    """Validate, embed, retrieve, and generate a grounded answer for a question."""
+    """Validate, embed, retrieve, and generate a grounded answer for a question.
+
+    `on_stage(stage, phase)`, when given, is called with phase "start"/"end"
+    around each of the "embed", "search", "generate", and (when it runs)
+    "verify" stages, so a caller can report live pipeline progress. It is
+    never called for validation errors, and a stage that raises never emits
+    its "end" event.
+    """
     cleaned = question.strip()
     if not cleaned:
         raise InvalidQuestionError("The question is empty")
@@ -55,19 +67,29 @@ def answer_question(
     if index.count() == 0:
         raise IndexEmptyError("The index is empty; run build_index first")
 
+    def _emit(stage: str, phase: str) -> None:
+        if on_stage is not None:
+            on_stage(stage, phase)
+
     total_start = time.perf_counter()
 
+    _emit("embed", "start")
     embed_start = time.perf_counter()
     vector = embed_texts(client, settings.embedding_model, [cleaned])[0]
     embed_seconds = time.perf_counter() - embed_start
+    _emit("embed", "end")
 
+    _emit("search", "start")
     search_start = time.perf_counter()
     retrieved = index.search(vector, settings.top_k, settings.similarity_threshold)
     search_seconds = time.perf_counter() - search_start
+    _emit("search", "end")
 
+    _emit("generate", "start")
     generate_start = time.perf_counter()
     answer = generate(client, settings, cleaned, retrieved)
     generate_seconds = time.perf_counter() - generate_start
+    _emit("generate", "end")
 
     timings: dict[str, float] = {
         "embed": embed_seconds,
@@ -77,9 +99,11 @@ def answer_question(
 
     verdict: Verdict | None = None
     if settings.verify_answer and retrieved:
+        _emit("verify", "start")
         verify_start = time.perf_counter()
         verdict = verify(client, settings, cleaned, retrieved, answer)
         timings["verify"] = time.perf_counter() - verify_start
+        _emit("verify", "end")
         if verdict.label in ("unsupported", "wrong_status"):
             answer = Answer(status="not_in_manual", text=NOT_IN_MANUAL_TEXT, sources=[])
 

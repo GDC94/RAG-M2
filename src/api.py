@@ -1,6 +1,9 @@
+import json
 import os
+import queue
 import sys
-from collections.abc import AsyncIterator
+import threading
+from collections.abc import AsyncIterator, Iterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
@@ -11,7 +14,7 @@ import chromadb
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
 from rag.client import create_client
@@ -49,6 +52,44 @@ def _validation_message(exc: RequestValidationError) -> str:
     return "; ".join(parts)
 
 
+def _stream_query_events(
+    question: str, settings: Settings, client: Any, index: ChunkIndex
+) -> Iterator[str]:
+    """Run `answer_question` in a worker thread, yielding one ndjson line per event.
+
+    Stage events are pushed to a queue as they happen so the generator can
+    yield them as soon as they arrive; the final line is always exactly one
+    "result" or "error" event, after which the generator stops.
+    """
+    events: queue.Queue[dict[str, Any]] = queue.Queue()
+
+    def on_stage(stage: str, phase: str) -> None:
+        events.put({"type": "stage", "stage": stage, "phase": phase})
+
+    def run() -> None:
+        try:
+            response = answer_question(question, settings, client, index, on_stage=on_stage)
+            events.put({"type": "result", "data": response.model_dump(mode="json")})
+        except RagError as exc:
+            events.put({"type": "error", "error": exc.to_json()["error"]})
+        except Exception:
+            events.put(
+                {
+                    "type": "error",
+                    "error": {"code": "internal_error", "message": "Unexpected server error"},
+                }
+            )
+
+    thread = threading.Thread(target=run, daemon=True)
+    thread.start()
+
+    while True:
+        event = events.get()
+        yield json.dumps(event, ensure_ascii=False) + "\n"
+        if event["type"] in ("result", "error"):
+            break
+
+
 def create_app(
     settings: Settings | None = None,
     client: Any = None,
@@ -78,6 +119,19 @@ def create_app(
             request.app.state.settings,
             request.app.state.client,
             request.app.state.index,
+        )
+
+    @app.post("/api/query/stream")
+    def query_stream(payload: QueryRequest, request: Request) -> StreamingResponse:
+        return StreamingResponse(
+            _stream_query_events(
+                payload.question,
+                request.app.state.settings,
+                request.app.state.client,
+                request.app.state.index,
+            ),
+            media_type="application/x-ndjson",
+            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
 
     @app.exception_handler(RagError)
