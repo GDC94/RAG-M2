@@ -89,10 +89,10 @@ Con `uv`, anteponer `uv run` a cualquiera de los comandos anteriores.
 
 ## Interfaz web
 
-Una interfaz de chat para consultar el manual y ver cómo respondió el RAG.
-Pensada para evaluar el sistema, así que muestra todo lo que devuelve el
-pipeline: fuentes citadas, fragmentos recuperados con su score, veredicto del
-verificador, tiempos por etapa y el JSON crudo.
+Un "workbench" de 3 columnas para consultar el manual y ver cómo respondió el
+RAG. Pensada para evaluar el sistema, así que muestra todo lo que devuelve el
+pipeline, pero solo cuando se pide: fuentes citadas, fragmentos recuperados
+con su score, veredicto del verificador, tiempos por etapa y el JSON crudo.
 
 ```bash
 cd web
@@ -120,10 +120,33 @@ Cómo está armada:
     HTTP: `invalid_question`/`invalid_request` 422, `index_empty` 503,
     `provider_error` 502, `provider_timeout` 504, resto 500.
 - **Front** (`web/`): Vite, React, TypeScript, Tailwind, Biome, Vitest y Zod.
-  Toda respuesta de la API se valida con Zod antes de mostrarse. Cada pregunta
-  es independiente; el historial vive solo en el navegador. Los componentes
-  de chat, input y lista de pasos vienen de [beUI](https://beui.dev) (MIT,
-  ver `web/THIRD_PARTY_NOTICES.md`).
+  Tres columnas: barra lateral del proyecto (colapsable), columna de chat, y
+  un panel de detalle que se abre a pedido (desde la tarjeta de resumen, una
+  cita o una fuente) con pestañas `Detalle` / `Frag. N` (una por fragmento
+  recuperado) / `JSON` (respuesta cruda con resaltado de sintaxis). En
+  paneles angostos las pestañas inactivas colapsan a íconos.
+  - **Adaptador de datos** (`src/features/ask/viewModel.ts`): traduce el
+    `QueryResponse` del backend (`system_answer`, `chunks_related`,
+    `verification`, `timings` en segundos, `sources` como títulos de
+    sección) a un view-model de UI (ids, tonos de color, milisegundos
+    redondeados, fragmentos citados en orden de cita). El backend no expone
+    tramos citados dentro del texto (`cited_spans`), así que la UI no resalta
+    pasajes citados: cada fragmento citado se marca con un número al final
+    de la respuesta que abre su pestaña.
+  - Toda respuesta de la API se valida con Zod antes de mostrarse. Cada
+    pregunta es independiente; el historial vive solo en el navegador.
+  - Componentes de [beUI](https://beui.dev) (MIT, ver
+    `web/THIRD_PARTY_NOTICES.md`), vendorizados y adaptados a los tokens de
+    la app: `Citations`/`CitationItem` (lista de fuentes), `MessageScroller`
+    (transcripción con scroll y `role="log"` para lectores de pantalla),
+    `AgentDisclosure` (colapsable) y `OverflowActions` (barra de pestañas
+    del panel, extendida con pestaña activa, botón de cierre y modo
+    icono-solo).
+  - Accesibilidad: todo botón de solo-ícono lleva `aria-label` y `title`;
+    focus ring visible en todo elemento interactivo; el estado "Trabajando"
+    se anuncia una sola vez (no en cada segundo que corre el contador) vía
+    el `role="log"` de la transcripción. Toda animación (springs, shimmer,
+    stagger, hovers) respeta `prefers-reduced-motion`.
 
 Scripts de `web/`: `pnpm dev` (solo Vite), `pnpm check` (Biome + tsc),
 `pnpm test`, `pnpm build`.
@@ -216,8 +239,9 @@ data/chromadb/            índice persistente (ignorado por git)
 outputs/*.json            reportes de recall, sweep, juez y ejemplos
 plan.md                   plan detallado y diagnóstico
 web/                      interfaz web (Vite + React)
-  src/features/ask/        esquemas Zod, cliente de la API, hook y componentes
-  src/components/          componentes de beUI (MIT)
+  src/features/ask/        esquemas Zod, cliente de la API, hook y view-model
+  src/features/workbench/  UI del workbench (sidebar, chat, panel de detalle)
+  src/components/          primitivas propias + componentes vendorizados de beUI (MIT)
 ```
 
 Dirección de dependencias: scripts y `api.py` → `pipeline` → módulos de etapa →
@@ -348,7 +372,7 @@ Front:
 cd web && pnpm test
 ```
 
-81 tests con Vitest y Testing Library; la API se reemplaza por fakes.
+289 tests con Vitest y Testing Library; la API se reemplaza por fakes.
 
 ## Límites conocidos
 
