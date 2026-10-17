@@ -18,6 +18,15 @@ export type AskResult =
   | { ok: true; data: QueryResponse }
   | { ok: false; error: { code: string; message: string; status?: number } };
 
+/** Backend origin for production builds (`VITE_API_BASE_URL`). Empty in local
+ * dev, so requests stay relative and go through the Vite `/api` proxy. */
+const DEFAULT_BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? '';
+
+/** Prefixes an API path with the base URL, ignoring trailing slashes on it. */
+export function apiUrl(path: string, base: string = DEFAULT_BASE_URL): string {
+  return `${base.replace(/\/+$/, '')}${path}`;
+}
+
 function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === 'AbortError';
 }
@@ -73,13 +82,13 @@ async function parseErrorEnvelope(response: Response): Promise<AskResult> {
 
 export async function askQuestion(
   question: string,
-  options?: { signal?: AbortSignal; fetchFn?: typeof fetch },
+  options?: { signal?: AbortSignal; fetchFn?: typeof fetch; baseUrl?: string },
 ): Promise<AskResult> {
   const fetchFn = options?.fetchFn ?? fetch;
 
   let response: Response;
   try {
-    response = await fetchFn('/api/query', {
+    response = await fetchFn(apiUrl('/api/query', options?.baseUrl), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ question }),
@@ -124,6 +133,7 @@ export async function askQuestion(
 export interface AskQuestionStreamOptions {
   signal?: AbortSignal;
   fetchFn?: typeof fetch;
+  baseUrl?: string;
   onStage?: (event: StageEvent) => void;
 }
 
@@ -179,7 +189,7 @@ export async function askQuestionStream(
 
   let response: Response;
   try {
-    response = await fetchFn('/api/query/stream', {
+    response = await fetchFn(apiUrl('/api/query/stream', options?.baseUrl), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ question }),

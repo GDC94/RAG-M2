@@ -7,6 +7,10 @@ app = 'alba-rag-api'
 primary_region = 'gru'
 
 [build]
+
+[env]
+  RAG_CORS_ORIGINS = 'https://rag-m2.vercel.app'
+
 [http_service]
   internal_port = 8080
   force_https = true

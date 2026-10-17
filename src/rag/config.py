@@ -26,6 +26,7 @@ class Settings(BaseModel):
     judge_model: str | None = "gpt-4.1-mini"
     verify_answer: bool = True
     debug: bool = False
+    cors_origins: list[str] = Field(default_factory=list)
 
 
 def _get(environ: Mapping[str, str], name: str) -> str | None:
@@ -43,6 +44,11 @@ def _parse_bool(name: str, raw: str) -> bool:
     if lowered in _FALSE_VALUES:
         return False
     raise ConfigError(f"Invalid boolean value for {name}: {raw!r}")
+
+
+def parse_csv(raw: str) -> list[str]:
+    """Split a comma-separated value, trimming items and dropping empty ones."""
+    return [item.strip() for item in raw.split(",") if item.strip()]
 
 
 def _parse_number(kind: str, converter, name: str, raw: str):
@@ -71,6 +77,9 @@ _INT_FIELDS = {
     "RAG_MAX_CHUNK_TOKENS": "max_chunk_tokens",
     "RAG_MAX_QUESTION_CHARS": "max_question_chars",
     "RAG_MAX_CONCURRENT_STREAMS": "max_concurrent_streams",
+}
+_LIST_FIELDS = {
+    "RAG_CORS_ORIGINS": "cors_origins",
 }
 _BOOL_FIELDS = {
     "RAG_VERIFY_ANSWER": "verify_answer",
@@ -104,6 +113,11 @@ def load_settings(environ: Mapping[str, str]) -> Settings:
         raw = _get(environ, env_name)
         if raw is not None:
             kwargs[field_name] = _parse_bool(env_name, raw)
+
+    for env_name, field_name in _LIST_FIELDS.items():
+        raw = _get(environ, env_name)
+        if raw is not None:
+            kwargs[field_name] = parse_csv(raw)
 
     try:
         return Settings(**kwargs)

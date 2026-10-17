@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import answeredFixture from './__fixtures__/query-response.answered.json';
-import { askQuestion, askQuestionStream } from './api';
+import { apiUrl, askQuestion, askQuestionStream } from './api';
 import type { StageEvent } from './schemas';
 
 function fakeResponse(options: { ok: boolean; status: number; json: () => Promise<unknown> }) {
@@ -338,5 +338,38 @@ describe('askQuestionStream', () => {
     if (!result.ok) {
       expect(result.error.code).toBe('network_error');
     }
+  });
+});
+
+describe('apiUrl', () => {
+  it('keeps the path relative when the base is empty', () => {
+    expect(apiUrl('/api/query', '')).toBe('/api/query');
+  });
+
+  it('prefixes the base and strips its trailing slashes', () => {
+    expect(apiUrl('/api/query', 'https://api.example.com/')).toBe(
+      'https://api.example.com/api/query',
+    );
+    expect(apiUrl('/api/query', 'https://api.example.com')).toBe(
+      'https://api.example.com/api/query',
+    );
+  });
+});
+
+describe('base URL option', () => {
+  it('askQuestion calls the prefixed URL', async () => {
+    const fetchFn = vi
+      .fn()
+      .mockResolvedValue(fakeResponse({ ok: false, status: 500, json: async () => ({}) }));
+    await askQuestion('hola', { fetchFn, baseUrl: 'https://api.example.com/' });
+    expect(fetchFn.mock.calls[0][0]).toBe('https://api.example.com/api/query');
+  });
+
+  it('askQuestionStream calls the prefixed URL', async () => {
+    const fetchFn = vi
+      .fn()
+      .mockResolvedValue(fakeResponse({ ok: false, status: 500, json: async () => ({}) }));
+    await askQuestionStream('hola', { fetchFn, baseUrl: 'https://api.example.com' });
+    expect(fetchFn.mock.calls[0][0]).toBe('https://api.example.com/api/query/stream');
   });
 });

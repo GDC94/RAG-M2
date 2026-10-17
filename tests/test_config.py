@@ -64,3 +64,20 @@ def test_empty_string_variable_counts_as_unset():
 
     assert settings.top_k == 3
     assert settings.judge_model == "gpt-4.1-mini"
+
+
+def test_cors_origins_defaults_to_empty_list():
+    settings = load_settings({"OPENAI_API_KEY": "sk-test-123"})
+
+    assert settings.cors_origins == []
+
+
+def test_cors_origins_are_split_trimmed_and_empty_items_dropped():
+    settings = load_settings(
+        {
+            "OPENAI_API_KEY": "sk-test-123",
+            "RAG_CORS_ORIGINS": " https://a.example , ,https://b.example,",
+        }
+    )
+
+    assert settings.cors_origins == ["https://a.example", "https://b.example"]

@@ -460,3 +460,52 @@ def test_query_non_string_question_returns_422_invalid_request(
 
     assert response.status_code == 422
     assert response.json()["error"]["code"] == "invalid_request"
+
+
+def _cors_app(chroma_client: chromadb.ClientAPI, origins: str | None):
+    environ = {"OPENAI_API_KEY": "sk-test"}
+    if origins is not None:
+        environ["RAG_CORS_ORIGINS"] = origins
+    settings = load_settings(environ)
+    index = ChunkIndex.open(chroma_client, str(uuid.uuid4()), settings.embedding_model)
+    return create_app(settings, FakeEmbeddingsClient(), index)
+
+
+def _preflight(app, origin: str) -> httpx.Response:
+    with TestClient(app) as test_client:
+        return test_client.options(
+            "/api/query/stream",
+            headers={
+                "Origin": origin,
+                "Access-Control-Request-Method": "POST",
+                "Access-Control-Request-Headers": "content-type",
+            },
+        )
+
+
+def test_cors_preflight_from_allowed_origin_is_accepted(chroma_client: chromadb.ClientAPI) -> None:
+    app = _cors_app(chroma_client, "https://rag-m2.vercel.app")
+
+    response = _preflight(app, "https://rag-m2.vercel.app")
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "https://rag-m2.vercel.app"
+    assert "access-control-allow-credentials" not in response.headers
+
+
+def test_cors_preflight_from_disallowed_origin_gets_no_allow_origin(
+    chroma_client: chromadb.ClientAPI,
+) -> None:
+    app = _cors_app(chroma_client, "https://rag-m2.vercel.app")
+
+    response = _preflight(app, "https://evil.example")
+
+    assert "access-control-allow-origin" not in response.headers
+
+
+def test_no_cors_headers_when_no_origins_configured(chroma_client: chromadb.ClientAPI) -> None:
+    app = _cors_app(chroma_client, None)
+
+    response = _preflight(app, "https://rag-m2.vercel.app")
+
+    assert "access-control-allow-origin" not in response.headers

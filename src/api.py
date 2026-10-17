@@ -15,11 +15,12 @@ import chromadb
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel
 
 from rag.client import create_client
-from rag.config import Settings, load_settings
+from rag.config import Settings, load_settings, parse_csv
 from rag.errors import RagError, RequestCancelledError
 from rag.index import ChunkIndex
 from rag.models import QueryResponse
@@ -130,6 +131,7 @@ def create_app(
     client: Any = None,
     index: ChunkIndex | None = None,
     lifespan: Any = None,
+    cors_origins: list[str] | None = None,
 ) -> FastAPI:
     """Build the FastAPI app wiring `/api/query` to `answer_question`.
 
@@ -137,8 +139,21 @@ def create_app(
     which is how tests build an app with fakes and no network calls. The
     module-level `app` instead passes `lifespan`, which builds the real deps
     lazily on startup so importing this module never touches the environment.
+
+    CORS middleware can only be added before the app starts, so the module-level
+    `app` (whose settings load in the lifespan) passes `cors_origins` explicitly;
+    otherwise they come from `settings`. No origins means no CORS middleware.
     """
     app = FastAPI(lifespan=lifespan)
+    if cors_origins is None and settings is not None:
+        cors_origins = settings.cors_origins
+    if cors_origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=cors_origins,
+            allow_methods=["GET", "POST"],
+            allow_headers=["content-type"],
+        )
     app.state.settings = settings
     app.state.client = client
     app.state.index = index
@@ -207,4 +222,4 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
     yield
 
 
-app = create_app(lifespan=_lifespan)
+app = create_app(lifespan=_lifespan, cors_origins=parse_csv(os.environ.get("RAG_CORS_ORIGINS", "")))

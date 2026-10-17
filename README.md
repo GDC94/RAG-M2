@@ -68,6 +68,7 @@ variables tiene un valor por defecto (un valor vacío usa el default):
 | `RAG_JUDGE_MODEL` | `gpt-4.1-mini` | modelo del verificador y del juez |
 | `RAG_VERIFY_ANSWER` | `true` | activa el verificador inline |
 | `RAG_DEBUG` | `false` | imprime tiempos por etapa en stderr |
+| `RAG_CORS_ORIGINS` | vacío | orígenes permitidos por CORS, separados por coma (vacío = sin CORS) |
 
 ## Cómo ejecutar los dos pipelines
 
@@ -103,6 +104,12 @@ pnpm dev:all         # API en :8000 y Vite en :5173
 
 Abrir http://localhost:5173. Requiere `OPENAI_API_KEY` en el `.env` de la
 raíz. Cada pregunta llama a OpenAI igual que el CLI.
+
+En producción el navegador llama a la API directamente (un proxy intermedio
+retrasa los eventos del stream NDJSON). Para eso, el build del frontend lee
+`VITE_API_BASE_URL` (p. ej. `https://alba-rag-api.fly.dev`; vacío en local, donde
+Vite hace de proxy de `/api`) y la API debe permitir ese origen con
+`RAG_CORS_ORIGINS` (ver `fly.toml`). Se lee del entorno del proceso, no del `.env`.
 
 Cómo está armada:
 
