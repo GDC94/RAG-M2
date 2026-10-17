@@ -3,6 +3,7 @@ import { RingCard } from '@/components/workbench-ui/RingCard';
 import { SectionTitle } from '@/components/workbench-ui/SectionTitle';
 import { TintTag } from '@/components/workbench-ui/TintTag';
 import type { AskViewModel, ChunkViewModel } from '@/features/ask/viewModel';
+import { CachedBadge } from '@/features/workbench/components/CachedBadge';
 import { VERDICT_TONES } from '@/lib/palette';
 import { FragmentCard } from './components/FragmentCard';
 import { PanelHeader } from './components/PanelHeader';
@@ -70,7 +71,15 @@ export function DetailTab({ viewModel, animKey, onOpenFragment, onOpenJson }: De
         </div>
 
         <div className="flex flex-col gap-3">
-          <SectionTitle>Tiempos</SectionTitle>
+          <div className="flex flex-wrap items-center gap-2">
+            <SectionTitle>Tiempos</SectionTitle>
+            {viewModel.cached && <CachedBadge />}
+          </div>
+          {viewModel.cached && (
+            <p className="text-fg-faint text-sm">
+              Respuesta desde caché: son los tiempos de la consulta original.
+            </p>
+          )}
           <TimingsGantt timings={timings} animKey={animKey} />
         </div>
 

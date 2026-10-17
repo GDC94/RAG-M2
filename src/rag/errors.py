@@ -20,6 +20,21 @@ class InvalidQuestionError(RagError):
     code = "invalid_question"
 
 
+class RateLimitedError(RagError):
+    code = "rate_limited"
+
+    def __init__(self, message: str, retry_after_seconds: int, limit: str) -> None:
+        super().__init__(message)
+        self.retry_after_seconds = retry_after_seconds
+        self.limit = limit
+
+    def to_json(self) -> dict:
+        body = super().to_json()
+        body["error"]["retry_after_seconds"] = self.retry_after_seconds
+        body["error"]["limit"] = self.limit
+        return body
+
+
 class RequestCancelledError(RagError):
     code = "request_cancelled"
 

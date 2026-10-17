@@ -1,5 +1,6 @@
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import type { AskViewModel, ChunkViewModel } from '@/features/ask/viewModel';
+import { CachedBadge } from '@/features/workbench/components/CachedBadge';
 import type { TabKey } from '@/features/workbench/workbenchReducer';
 import { EASE_OUT } from '@/lib/ease';
 import { AnswerBlock } from './AnswerBlock';
@@ -63,9 +64,10 @@ export function DoneTurn({
       initial="hidden"
       animate="show"
     >
-      <motion.p variants={itemVariants(reduce)} className="text-sm text-fg-subtle">
-        Trabajó {workedSeconds} s
-      </motion.p>
+      <motion.div variants={itemVariants(reduce)} className="flex flex-wrap items-center gap-2">
+        <p className="text-sm text-fg-subtle">Trabajó {workedSeconds} s</p>
+        {viewModel.cached && <CachedBadge />}
+      </motion.div>
 
       <motion.div variants={itemVariants(reduce)}>
         <AnswerBlock

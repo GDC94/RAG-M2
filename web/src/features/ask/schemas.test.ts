@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import rateLimitedFixture from './__fixtures__/error.rate-limited.json';
 import answeredFixture from './__fixtures__/query-response.answered.json';
 import notInManualFixture from './__fixtures__/query-response.not-in-manual.json';
 import {
@@ -43,6 +44,14 @@ describe('QueryResponseSchema', () => {
     }
   });
 
+  it('parses cached from the backend contract and defaults it to false when absent', () => {
+    const { cached, ...withoutCached } = answeredFixture as Record<string, unknown>;
+
+    expect(QueryResponseSchema.parse(answeredFixture).cached).toBe(false);
+    expect(QueryResponseSchema.parse(withoutCached).cached).toBe(false);
+    expect(QueryResponseSchema.parse({ ...answeredFixture, cached: true }).cached).toBe(true);
+  });
+
   it('rejects an unknown status', () => {
     const result = QueryResponseSchema.safeParse({
       ...answeredFixture,
@@ -84,6 +93,17 @@ describe('ApiErrorSchema', () => {
   it('documents the stream lifecycle errors emitted by FastAPI', () => {
     expect(KNOWN_ERROR_CODES).toContain('stream_busy');
     expect(KNOWN_ERROR_CODES).toContain('request_cancelled');
+  });
+
+  it('documents the rate limit error code', () => {
+    expect(KNOWN_ERROR_CODES).toContain('rate_limited');
+  });
+
+  it('parses the backend rate_limited envelope, keeping the retry seconds', () => {
+    const result = ApiErrorSchema.parse(rateLimitedFixture);
+
+    expect(result.error.code).toBe('rate_limited');
+    expect(result.error.retry_after_seconds).toBe(60);
   });
 
   it('parses a known error envelope', () => {

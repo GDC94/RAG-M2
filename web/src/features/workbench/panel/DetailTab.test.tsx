@@ -37,6 +37,7 @@ function viewModel(overrides: Partial<AskViewModel> = {}): AskViewModel {
     },
     timings: { stages: [{ stage: 'embed', ms: 7, startMs: 0 }], totalMs: 10 },
     docLabel: 'alba-manual@4.2',
+    cached: false,
     ...overrides,
   };
 }
@@ -148,5 +149,29 @@ describe('DetailTab', () => {
     expect(screen.getByText('JSON crudo')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Abrir' }));
     expect(onOpenJson).toHaveBeenCalledOnce();
+  });
+
+  it('flags cached answers in the timings area and says the timings are the original ones', () => {
+    const { rerender } = render(
+      <DetailTab
+        viewModel={viewModel()}
+        animKey={0}
+        onOpenFragment={() => {}}
+        onOpenJson={() => {}}
+      />,
+    );
+    expect(screen.queryByText('Desde caché')).not.toBeInTheDocument();
+    expect(screen.queryByText(/tiempos de la consulta original/i)).not.toBeInTheDocument();
+
+    rerender(
+      <DetailTab
+        viewModel={viewModel({ cached: true })}
+        animKey={0}
+        onOpenFragment={() => {}}
+        onOpenJson={() => {}}
+      />,
+    );
+    expect(screen.getByText('Desde caché')).toBeInTheDocument();
+    expect(screen.getByText(/tiempos de la consulta original/i)).toBeInTheDocument();
   });
 });

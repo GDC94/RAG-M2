@@ -11,6 +11,7 @@ const data: QueryResponse = {
   sources: [],
   verification: null,
   timings: null,
+  cached: false,
 };
 
 describe('JsonTab', () => {

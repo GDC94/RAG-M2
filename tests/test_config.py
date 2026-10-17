@@ -81,3 +81,43 @@ def test_cors_origins_are_split_trimmed_and_empty_items_dropped():
     )
 
     assert settings.cors_origins == ["https://a.example", "https://b.example"]
+
+
+def test_abuse_protection_defaults():
+    settings = load_settings({"OPENAI_API_KEY": "sk-test-123"})
+
+    assert settings.rate_limit_per_minute == 5
+    assert settings.rate_limit_per_day == 20
+    assert settings.rate_limit_global_per_day == 300
+    assert settings.cache_size == 200
+    assert settings.cache_ttl_seconds == 86400
+
+
+def test_abuse_protection_env_vars_override_defaults():
+    settings = load_settings(
+        {
+            "OPENAI_API_KEY": "sk-test-123",
+            "RAG_RATE_LIMIT_PER_MINUTE": "2",
+            "RAG_RATE_LIMIT_PER_DAY": "7",
+            "RAG_RATE_LIMIT_GLOBAL_PER_DAY": "100",
+            "RAG_CACHE_SIZE": "10",
+            "RAG_CACHE_TTL_SECONDS": "60",
+        }
+    )
+
+    assert settings.rate_limit_per_minute == 2
+    assert settings.rate_limit_per_day == 7
+    assert settings.rate_limit_global_per_day == 100
+    assert settings.cache_size == 10
+    assert settings.cache_ttl_seconds == 60
+
+
+def test_abuse_protection_zero_disables_and_negative_is_rejected():
+    settings = load_settings(
+        {"OPENAI_API_KEY": "sk-test-123", "RAG_RATE_LIMIT_PER_MINUTE": "0", "RAG_CACHE_SIZE": "0"}
+    )
+    assert settings.rate_limit_per_minute == 0
+    assert settings.cache_size == 0
+
+    with pytest.raises(ConfigError):
+        load_settings({"OPENAI_API_KEY": "sk-test-123", "RAG_RATE_LIMIT_PER_DAY": "-1"})

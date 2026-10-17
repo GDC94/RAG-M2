@@ -1,13 +1,20 @@
 import { describe, expect, it, vi } from 'vitest';
+import rateLimitedFixture from './__fixtures__/error.rate-limited.json';
 import answeredFixture from './__fixtures__/query-response.answered.json';
 import { apiUrl, askQuestion, askQuestionStream } from './api';
 import type { StageEvent } from './schemas';
 
-function fakeResponse(options: { ok: boolean; status: number; json: () => Promise<unknown> }) {
+function fakeResponse(options: {
+  ok: boolean;
+  status: number;
+  json: () => Promise<unknown>;
+  headers?: Record<string, string>;
+}) {
   return {
     ok: options.ok,
     status: options.status,
     json: options.json,
+    headers: new Headers(options.headers),
   } as Response;
 }
 
@@ -19,6 +26,7 @@ function fakeStreamResponse(options: {
   ok?: boolean;
   status?: number;
   json?: () => Promise<unknown>;
+  headers?: Record<string, string>;
 }) {
   const encoder = new TextEncoder();
   const body = new ReadableStream<Uint8Array>({
@@ -33,6 +41,7 @@ function fakeStreamResponse(options: {
     ok: options.ok ?? true,
     status: options.status ?? 200,
     body,
+    headers: new Headers(options.headers),
     json:
       options.json ??
       (async () => {
@@ -114,6 +123,41 @@ describe('askQuestion', () => {
       ok: false,
       error: { code: 'index_empty', message: 'The index is empty', status: 503 },
     });
+  });
+
+  it('maps a 429 rate_limited envelope, exposing the retry seconds from the body', async () => {
+    const fetchFn = vi
+      .fn()
+      .mockResolvedValue(
+        fakeResponse({ ok: false, status: 429, json: async () => rateLimitedFixture }),
+      );
+
+    const result = await askQuestion('hola', { fetchFn });
+
+    expect(result).toEqual({
+      ok: false,
+      error: {
+        code: 'rate_limited',
+        message: rateLimitedFixture.error.message,
+        status: 429,
+        retryAfterSeconds: 60,
+      },
+    });
+  });
+
+  it('falls back to the Retry-After header when the 429 body has no retry seconds', async () => {
+    const fetchFn = vi.fn().mockResolvedValue(
+      fakeResponse({
+        ok: false,
+        status: 429,
+        headers: { 'Retry-After': '45' },
+        json: async () => ({ error: { code: 'rate_limited', message: 'slow down' } }),
+      }),
+    );
+
+    const result = await askQuestion('hola', { fetchFn });
+
+    expect(result).toMatchObject({ ok: false, error: { retryAfterSeconds: 45 } });
   });
 
   it('returns invalid_response when a 200 body fails schema validation', async () => {
@@ -294,6 +338,36 @@ describe('askQuestionStream', () => {
     if (!result.ok) {
       expect(result.error.code).toBe('invalid_response');
     }
+  });
+
+  it('exposes the retry seconds of a 429 before the stream starts', async () => {
+    const fetchFn = vi.fn().mockResolvedValue(
+      fakeStreamResponse({
+        chunks: [],
+        ok: false,
+        status: 429,
+        json: async () => rateLimitedFixture,
+      }),
+    );
+
+    const result = await askQuestionStream('hola', { fetchFn });
+
+    expect(result).toMatchObject({
+      ok: false,
+      error: { code: 'rate_limited', status: 429, retryAfterSeconds: 60 },
+    });
+  });
+
+  it('delivers a cached result like any other result', async () => {
+    const fetchFn = vi.fn().mockResolvedValue(
+      fakeStreamResponse({
+        chunks: [ndjson({ type: 'result', data: { ...answeredFixture, cached: true } })],
+      }),
+    );
+
+    const result = await askQuestionStream('hola', { fetchFn });
+
+    expect(result).toMatchObject({ ok: true, data: { cached: true } });
   });
 
   it('maps a non-2xx error envelope the same way askQuestion does', async () => {

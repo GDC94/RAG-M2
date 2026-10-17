@@ -18,6 +18,11 @@ describe('toViewModel', () => {
     expect(vm.isAnswered).toBe(true);
   });
 
+  it('carries the cached flag through to the view model', () => {
+    expect(toViewModel(parse(answeredFixture)).cached).toBe(false);
+    expect(toViewModel(parse({ ...answeredFixture, cached: true })).cached).toBe(true);
+  });
+
   it('marks not_in_manual as not answered, with no chunks and no docLabel', () => {
     const vm = toViewModel(parse(notInManualFixture));
 

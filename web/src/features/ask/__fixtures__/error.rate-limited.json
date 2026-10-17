@@ -1,0 +1,8 @@
+{
+  "error": {
+    "code": "rate_limited",
+    "message": "Hiciste demasiadas consultas en poco tiempo. Volvé a intentar en 1 minuto.",
+    "retry_after_seconds": 60,
+    "limit": "per_minute"
+  }
+}

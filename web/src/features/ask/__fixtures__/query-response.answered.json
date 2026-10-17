@@ -26,5 +26,6 @@
     "search": 0.109,
     "generate": 0.412,
     "total": 0.563
-  }
+  },
+  "cached": false
 }

@@ -14,7 +14,10 @@ interface BaseTurn {
 export type Turn =
   | (BaseTurn & { state: 'loading' })
   | (BaseTurn & { state: 'success'; response: QueryResponse; skipped: StageName[] })
-  | (BaseTurn & { state: 'error'; error: { code: string; message: string } })
+  | (BaseTurn & {
+      state: 'error';
+      error: { code: string; message: string; retryAfterSeconds?: number };
+    })
   | (BaseTurn & { state: 'stopped' });
 
 export interface UseAskOptions {

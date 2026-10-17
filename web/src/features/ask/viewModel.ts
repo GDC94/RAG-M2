@@ -49,6 +49,8 @@ export interface AskViewModel {
   timings: TimingsViewModel | null;
   /** `doc_id@version` of the manual these chunks came from, or `null` when nothing was retrieved. */
   docLabel: string | null;
+  /** The answer was replayed from the backend's cache (original timings kept). */
+  cached: boolean;
 }
 
 const VERDICT_LABEL_BY_BACKEND_LABEL: Record<
@@ -155,6 +157,7 @@ export function toViewModel(response: QueryResponse): AskViewModel {
     verdict,
     timings: toTimingsViewModel(response.timings),
     docLabel: chunks[0]?.docLabel ?? null,
+    cached: response.cached,
   };
 }
 

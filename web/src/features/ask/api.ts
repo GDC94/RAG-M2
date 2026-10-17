@@ -16,7 +16,10 @@ export type AskErrorCode =
 
 export type AskResult =
   | { ok: true; data: QueryResponse }
-  | { ok: false; error: { code: string; message: string; status?: number } };
+  | {
+      ok: false;
+      error: { code: string; message: string; status?: number; retryAfterSeconds?: number };
+    };
 
 /** Backend origin for production builds (`VITE_API_BASE_URL`). Empty in local
  * dev, so requests stay relative and go through the Vite `/api` proxy. */
@@ -41,6 +44,11 @@ function fetchRejectionToResult(error: unknown): AskResult {
   return { ok: false, error: { code: 'network_error', message } };
 }
 
+function parseRetryAfterHeader(response: Response): number | undefined {
+  const seconds = Number.parseInt(response.headers.get('Retry-After') ?? '', 10);
+  return Number.isInteger(seconds) && seconds > 0 ? seconds : undefined;
+}
+
 /** Shared by `askQuestion` and `askQuestionStream`: parse a non-2xx response
  * body against the known `{ error: { code, message } }` envelope. */
 async function parseErrorEnvelope(response: Response): Promise<AskResult> {
@@ -60,12 +68,17 @@ async function parseErrorEnvelope(response: Response): Promise<AskResult> {
 
   const parsedError = ApiErrorSchema.safeParse(body);
   if (parsedError.success) {
+    // The body is the primary source: a cross-origin browser can only read the
+    // `Retry-After` header if the server exposes it, so it is just a fallback.
+    const retryAfterSeconds =
+      parsedError.data.error.retry_after_seconds ?? parseRetryAfterHeader(response);
     return {
       ok: false,
       error: {
         code: parsedError.data.error.code,
         message: parsedError.data.error.message,
         status: response.status,
+        ...(retryAfterSeconds !== undefined && { retryAfterSeconds }),
       },
     };
   }
@@ -173,7 +186,16 @@ function handleStreamLine(line: string, onStage?: (event: StageEvent) => void): 
   if (event.type === 'result') {
     return { ok: true, data: event.data };
   }
-  return { ok: false, error: { code: event.error.code, message: event.error.message } };
+  return {
+    ok: false,
+    error: {
+      code: event.error.code,
+      message: event.error.message,
+      ...(event.error.retry_after_seconds !== undefined && {
+        retryAfterSeconds: event.error.retry_after_seconds,
+      }),
+    },
+  };
 }
 
 /**

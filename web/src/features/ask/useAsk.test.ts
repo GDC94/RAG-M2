@@ -22,6 +22,7 @@ const successResult: AskResult = {
     sources: [],
     verification: null,
     timings: null,
+    cached: false,
   },
 };
 
@@ -174,6 +175,24 @@ describe('useAsk', () => {
       expect(turn.stages.generate).toBe('pending');
     }
     expect(result.current.isBusy).toBe(false);
+  });
+
+  it('keeps the retry seconds of a rate limited turn so the UI can show the wait', async () => {
+    const ask = vi.fn().mockResolvedValue({
+      ok: false,
+      error: { code: 'rate_limited', message: 'slow down', status: 429, retryAfterSeconds: 30 },
+    });
+    const { result } = renderHook(() => useAsk({ ask }));
+
+    await act(async () => {
+      result.current.ask('hola');
+    });
+
+    const turn = result.current.turns[0];
+    expect(turn?.state).toBe('error');
+    if (turn?.state === 'error') {
+      expect(turn.error).toMatchObject({ code: 'rate_limited', retryAfterSeconds: 30 });
+    }
   });
 
   it('ignores a second ask while the first is still in flight', async () => {

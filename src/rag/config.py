@@ -23,6 +23,12 @@ class Settings(BaseModel):
     chunk_overlap_ratio: float = Field(default=0.15, ge=0, lt=1)
     max_question_chars: int = Field(default=1000, gt=0)
     max_concurrent_streams: int = Field(default=4, gt=0)
+    # 0 disables a limit / the cache.
+    rate_limit_per_minute: int = Field(default=5, ge=0)
+    rate_limit_per_day: int = Field(default=20, ge=0)
+    rate_limit_global_per_day: int = Field(default=300, ge=0)
+    cache_size: int = Field(default=200, ge=0)
+    cache_ttl_seconds: int = Field(default=86400, gt=0)
     judge_model: str | None = "gpt-4.1-mini"
     verify_answer: bool = True
     debug: bool = False
@@ -77,6 +83,11 @@ _INT_FIELDS = {
     "RAG_MAX_CHUNK_TOKENS": "max_chunk_tokens",
     "RAG_MAX_QUESTION_CHARS": "max_question_chars",
     "RAG_MAX_CONCURRENT_STREAMS": "max_concurrent_streams",
+    "RAG_RATE_LIMIT_PER_MINUTE": "rate_limit_per_minute",
+    "RAG_RATE_LIMIT_PER_DAY": "rate_limit_per_day",
+    "RAG_RATE_LIMIT_GLOBAL_PER_DAY": "rate_limit_global_per_day",
+    "RAG_CACHE_SIZE": "cache_size",
+    "RAG_CACHE_TTL_SECONDS": "cache_ttl_seconds",
 }
 _LIST_FIELDS = {
     "RAG_CORS_ORIGINS": "cors_origins",

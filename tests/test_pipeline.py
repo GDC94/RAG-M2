@@ -144,8 +144,10 @@ def test_answer_question_returns_answered_response_with_related_chunks(
         "sources",
         "verification",
         "timings",
+        "cached",
     ]
     assert response.verification is None
+    assert response.cached is False
 
 
 def test_answer_question_abstains_below_threshold_without_calling_chat(

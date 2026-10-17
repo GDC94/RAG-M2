@@ -25,6 +25,7 @@ const successTurn: Turn = {
     sources: [],
     verification: null,
     timings: { total: 0.5 },
+    cached: false,
   },
   skipped: [],
 };
@@ -39,6 +40,7 @@ const viewModel: AskViewModel = {
   verdict: null,
   timings: { stages: [], totalMs: 500 },
   docLabel: null,
+  cached: false,
 };
 
 function baseProps(overrides: Partial<ChatColumnProps> = {}): ChatColumnProps {

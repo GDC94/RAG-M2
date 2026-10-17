@@ -22,6 +22,7 @@ const viewModel: AskViewModel = {
   verdict: null,
   timings: { stages: [], totalMs: 500 },
   docLabel: null,
+  cached: false,
 };
 
 const noop = () => {};
@@ -64,6 +65,7 @@ describe('ChatTurn', () => {
         sources: [],
         verification: null,
         timings: null,
+        cached: false,
       },
       skipped: [],
     };
@@ -182,6 +184,7 @@ describe('ChatTurn pacing', () => {
         sources: [],
         verification: null,
         timings: null,
+        cached: false,
       },
       skipped: ['generate', 'verify'],
     };

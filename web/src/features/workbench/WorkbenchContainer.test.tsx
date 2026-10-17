@@ -23,6 +23,7 @@ const successResult: AskResult = {
     sources: ['19. Cómo solicitar vacaciones'],
     verification: null,
     timings: { embed: 0.01, search: 0.02, generate: 0.3, total: 0.33 },
+    cached: false,
   },
 };
 
@@ -108,6 +109,7 @@ describe('WorkbenchContainer', () => {
         sources: ['19. Cómo solicitar vacaciones'],
         verification: null,
         timings: { embed: 0.01, search: 0.02, generate: 0.3, total: 0.33 },
+        cached: false,
       },
     };
     const askFn = async () => multiChunkResult;

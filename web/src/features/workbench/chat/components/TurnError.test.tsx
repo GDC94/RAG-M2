@@ -22,4 +22,40 @@ describe('TurnError', () => {
 
     expect(screen.getByText('Ocurrió un error inesperado.')).toBeInTheDocument();
   });
+
+  it('tells the user how long to wait when rate limited', () => {
+    render(
+      <TurnError
+        state="error"
+        error={{ code: 'rate_limited', message: 'x', retryAfterSeconds: 45 }}
+      />,
+    );
+
+    expect(screen.getByText(/límite de consultas/i)).toBeInTheDocument();
+    expect(screen.getByText(/45 segundos/)).toBeInTheDocument();
+  });
+
+  it.each([
+    [1, '1 segundo'],
+    [60, '1 minuto'],
+    [61, '2 minutos'],
+    [3600, '1 hora'],
+    [5 * 3600 - 1, '5 horas'],
+  ])('formats a %i second wait as "%s"', (seconds, expected) => {
+    render(
+      <TurnError
+        state="error"
+        error={{ code: 'rate_limited', message: 'x', retryAfterSeconds: seconds }}
+      />,
+    );
+
+    expect(screen.getByText(new RegExp(`en ${expected}\\.`))).toBeInTheDocument();
+  });
+
+  it('falls back to a generic wait hint when the retry time is unknown', () => {
+    render(<TurnError state="error" error={{ code: 'rate_limited', message: 'x' }} />);
+
+    expect(screen.getByText(/límite de consultas/i)).toBeInTheDocument();
+    expect(screen.getByText(/más tarde/i)).toBeInTheDocument();
+  });
 });

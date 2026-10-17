@@ -34,6 +34,7 @@ function viewModel(overrides: Partial<AskViewModel> = {}): AskViewModel {
     verdict: null,
     timings: null,
     docLabel: 'alba-manual@4.2',
+    cached: false,
     ...overrides,
   };
 }
@@ -46,6 +47,7 @@ const rawResponse: QueryResponse = {
   sources: [],
   verification: null,
   timings: null,
+  cached: false,
 };
 
 function baseProps() {

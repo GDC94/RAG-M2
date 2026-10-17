@@ -42,6 +42,18 @@ def build_index(
     )
 
 
+def validate_question(question: str, settings: Settings) -> str:
+    """Return the trimmed question, or raise `InvalidQuestionError` if unusable."""
+    cleaned = question.strip()
+    if not cleaned:
+        raise InvalidQuestionError("The question is empty")
+    if len(cleaned) > settings.max_question_chars:
+        raise InvalidQuestionError(
+            f"The question exceeds {settings.max_question_chars} characters"
+        )
+    return cleaned
+
+
 def answer_question(
     question: str,
     settings: Settings,
@@ -58,13 +70,7 @@ def answer_question(
     never called for validation errors, and a stage that raises never emits
     its "end" event.
     """
-    cleaned = question.strip()
-    if not cleaned:
-        raise InvalidQuestionError("The question is empty")
-    if len(cleaned) > settings.max_question_chars:
-        raise InvalidQuestionError(
-            f"The question exceeds {settings.max_question_chars} characters"
-        )
+    cleaned = validate_question(question, settings)
     if index.count() == 0:
         raise IndexEmptyError("The index is empty; run build_index first")
 

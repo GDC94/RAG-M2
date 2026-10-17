@@ -33,6 +33,7 @@ function viewModel(overrides: Partial<AskViewModel> = {}): AskViewModel {
     verdict: null,
     timings: { stages: [], totalMs: 563 },
     docLabel: 'alba-manual@4.2',
+    cached: false,
     ...overrides,
   };
 }
@@ -168,5 +169,22 @@ describe('DoneTurn', () => {
     await user.click(screen.getByRole('button', { name: 'Ver fragmento 1' }));
 
     expect(onOpenTab).toHaveBeenCalledWith('frag-0', 'turn-1');
+  });
+
+  it('shows the cache badge only when the answer came from the cache', () => {
+    const props = {
+      turnId: 'turn-1',
+      clientElapsedSeconds: 1,
+      panelOpenForThisTurn: false,
+      citationsOpen: false,
+      onCitationsOpenChange: () => {},
+      onOpenTab: () => {},
+      onClosePanel: () => {},
+    };
+    const { rerender } = render(<DoneTurn viewModel={viewModel()} {...props} />);
+    expect(screen.queryByText('Desde caché')).not.toBeInTheDocument();
+
+    rerender(<DoneTurn viewModel={viewModel({ cached: true })} {...props} />);
+    expect(screen.getByText('Desde caché')).toBeInTheDocument();
   });
 });

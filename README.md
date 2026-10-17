@@ -65,6 +65,11 @@ variables tiene un valor por defecto (un valor vacío usa el default):
 | `RAG_CHUNK_OVERLAP_RATIO` | `0.15` | solapamiento si una sección excede el tope |
 | `RAG_MAX_QUESTION_CHARS` | `1000` | largo máximo de la pregunta |
 | `RAG_MAX_CONCURRENT_STREAMS` | `4` | consultas NDJSON activas antes de responder `503` |
+| `RAG_RATE_LIMIT_PER_MINUTE` | `5` | consultas por IP por minuto (ventana móvil; `0` desactiva el límite) |
+| `RAG_RATE_LIMIT_PER_DAY` | `20` | consultas por IP en 24 h (`0` desactiva) |
+| `RAG_RATE_LIMIT_GLOBAL_PER_DAY` | `300` | consultas totales en 24 h, todas las IP (`0` desactiva) |
+| `RAG_CACHE_SIZE` | `200` | respuestas guardadas en el caché (`0` desactiva el caché) |
+| `RAG_CACHE_TTL_SECONDS` | `86400` | vida de cada respuesta en el caché, en segundos |
 | `RAG_JUDGE_MODEL` | `gpt-4.1-mini` | modelo del verificador y del juez |
 | `RAG_VERIFY_ANSWER` | `true` | activa el verificador inline |
 | `RAG_DEBUG` | `false` | imprime tiempos por etapa en stderr |
@@ -124,8 +129,39 @@ Cómo está armada:
     verificador después reemplace.
   - `GET /api/health`.
   - Errores con el mismo formato `{"error": {"code", "message"}}`, mapeados a
-    HTTP: `invalid_question`/`invalid_request` 422, `index_empty` 503,
-    `provider_error` 502, `provider_timeout` 504, resto 500.
+    HTTP: `invalid_question`/`invalid_request` 422, `rate_limited` 429,
+    `index_empty` 503, `provider_error` 502, `provider_timeout` 504, resto 500.
+  - **Límite de uso y caché** (para el demo público, donde cada pregunta
+    cuesta 3 llamadas a OpenAI: embedding, generación y verificación). En
+    ambos endpoints el orden es: validar la pregunta, buscar en el caché,
+    aplicar el límite, correr el pipeline y guardar en el caché.
+    - Límite por IP: `RAG_RATE_LIMIT_PER_MINUTE` y `RAG_RATE_LIMIT_PER_DAY`,
+      más un tope global diario (`RAG_RATE_LIMIT_GLOBAL_PER_DAY`). Son
+      ventanas móviles, no se reinician a una hora fija. Al superar un límite
+      responde `429` (en el stream, antes de empezar a transmitir) con el
+      header `Retry-After` y este cuerpo; la interfaz muestra cuánto falta:
+
+      ```json
+      { "error": { "code": "rate_limited", "message": "...", "retry_after_seconds": 60, "limit": "per_minute" } }
+      ```
+
+      `limit` es `per_minute`, `per_day` o `global_per_day`. Una consulta
+      rechazada no gasta cupo, y las preguntas inválidas (422) tampoco.
+    - La IP sale del header `Fly-Client-IP` y, si falta, del socket. Ese
+      header lo pone el proxy de Fly, que descarta el que mande el cliente:
+      solo es confiable detrás de Fly; en otro despliegue cualquiera podría
+      falsearlo para esquivar el límite.
+    - Caché de coincidencia exacta: la clave es la pregunta normalizada
+      (sin acentos, minúsculas, espacios colapsados, sin `¿¡` iniciales ni
+      `?!.` finales), así que `¿Cómo solicito vacaciones?` y `como solicito
+      vacaciones` comparten entrada. No hay similitud semántica. Un acierto
+      no llama a OpenAI, no cuenta para el límite, conserva los tiempos
+      originales y devuelve `"cached": true`; la interfaz lo marca con
+      "Desde caché". Solo se guardan respuestas exitosas (nunca errores ni
+      consultas canceladas). Es LRU con TTL.
+    - Todo el estado vive en memoria del proceso: se pierde al reiniciar y
+      asume una sola máquina (como el demo en Fly). Con más de una máquina
+      cada una tendría su propio contador y su propio caché.
 - **Front** (`web/`): Vite, React, TypeScript, Tailwind, Biome, Vitest y Zod.
   Tres columnas: barra lateral del proyecto (colapsable), columna de chat, y
   un panel de detalle que se abre a pedido (desde la tarjeta de resumen, una
@@ -179,7 +215,8 @@ salida sea parseable por otro proceso:
   ],
   "status": "answered",
   "verification": { "label": "supported", "reason": "..." },
-  "timings": { "embed": 0.041, "search": 0.003, "generate": 0.812, "verify": 0.734, "total": 1.59 }
+  "timings": { "embed": 0.041, "search": 0.003, "generate": 0.812, "verify": 0.734, "total": 1.59 },
+  "cached": false
 }
 ```
 
@@ -197,6 +234,9 @@ En error, el JSON tiene esta forma y el proceso sale con código 1:
 ```json
 { "error": { "code": "index_empty", "message": "..." } }
 ```
+
+- `cached`: `true` solo cuando la API respondió desde su caché; el CLI
+  siempre imprime `false`.
 
 Códigos posibles: `config_error`, `invalid_question`, `index_empty`,
 `index_model_mismatch`, `ingestion_error`, `provider_error`,
@@ -228,6 +268,8 @@ src/evaluate.py          CLI de evaluación (recall, sweep, judge)
 src/api.py               API HTTP (FastAPI) para la interfaz web
 src/rag/
   config.py              Settings, carga de .env
+  rate_limit.py          límite de uso por IP y global (ventanas móviles, en memoria)
+  cache.py               caché LRU con TTL de respuestas, clave = pregunta normalizada
   models.py               modelos Pydantic (Chunk, Answer, QueryResponse, ...)
   errors.py               jerarquía de errores tipados
   client.py               cliente OpenAI, manejo de timeout/reintentos
@@ -369,7 +411,7 @@ verdad, y varía entre corridas aun con temperatura 0.
 pytest
 ```
 
-113 tests, deterministas: Chroma corre en memoria y OpenAI se reemplaza por
+175 tests, deterministas: Chroma corre en memoria y OpenAI se reemplaza por
 fakes con la misma forma que el SDK. No hacen llamadas de red ni gastan
 dinero. La API se prueba con el `TestClient` de FastAPI y los mismos fakes.
 
@@ -379,7 +421,7 @@ Front:
 cd web && pnpm test
 ```
 
-289 tests con Vitest y Testing Library; la API se reemplaza por fakes.
+350 tests con Vitest y Testing Library; la API se reemplaza por fakes.
 
 ## Límites conocidos
 
@@ -389,12 +431,15 @@ cd web && pnpm test
   fallar (ver la sección de generación y verificador).
 - La calibración de umbral y `top_k` se hizo sobre 34 preguntas; un corpus
   más grande podría correr valores distintos.
-- Sin concurrencia ni límites por usuario: un operador, local. La interfaz
-  web corre en la máquina de quien la levanta, con su propia clave.
+- El límite de uso y el caché son en memoria de un solo proceso: se
+  reinician con la máquina y no se comparten entre máquinas. Localmente
+  (un operador, su propia clave) conviene desactivarlos con valores `0`.
 - Si se corta una consulta desde la web (botón de stop), el backend termina
   igual esa corrida y su costo; solo se descarta el resultado.
-- Sin autenticación, multi-tenant ni rate limiting: alcance de un solo
-  operador con una sola clave (ver modelo de amenazas en `plan.md`).
+- Sin autenticación ni multi-tenant: alcance de un solo operador con una
+  sola clave (ver modelo de amenazas en `plan.md`). El límite por IP frena
+  el abuso casual del demo, no a un atacante con muchas IP; para eso sirve
+  el tope global diario.
 
 ## Evolución
 

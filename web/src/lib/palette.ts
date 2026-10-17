@@ -46,6 +46,10 @@ export const FRAGMENT_TONES: readonly ColorTone[] = [
   },
 ];
 
+/** Answers replayed from the backend's cache share the info accent with
+ * the first fragment / the `embed` stage. */
+export const CACHE_TONE: ColorTone = FRAGMENT_TONES[0];
+
 export type PipelineStage = 'embed' | 'search' | 'generate' | 'verify';
 
 export const STAGE_NAMES: readonly PipelineStage[] = ['embed', 'search', 'generate', 'verify'];

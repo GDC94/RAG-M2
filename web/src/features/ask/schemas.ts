@@ -30,6 +30,8 @@ export const QueryResponseSchema = z.object({
   sources: z.array(z.string()).default([]),
   verification: VerdictSchema.nullable().default(null),
   timings: z.record(z.string(), z.number()).nullable().default(null),
+  /** True when the backend replayed a stored answer instead of running the pipeline. */
+  cached: z.boolean().default(false),
 });
 
 /**
@@ -48,6 +50,7 @@ export const KNOWN_ERROR_CODES = [
   'provider_timeout',
   'request_cancelled',
   'stream_busy',
+  'rate_limited',
 ] as const;
 
 export type KnownErrorCode = (typeof KNOWN_ERROR_CODES)[number];
@@ -56,6 +59,8 @@ export const ApiErrorSchema = z.object({
   error: z.object({
     code: z.string(),
     message: z.string(),
+    /** Only on `rate_limited`: seconds until the request would be admitted. */
+    retry_after_seconds: z.number().int().positive().optional(),
   }),
 });
 
@@ -86,7 +91,11 @@ export const ResultEventSchema = z.object({
 
 export const ErrorEventSchema = z.object({
   type: z.literal('error'),
-  error: z.object({ code: z.string(), message: z.string() }),
+  error: z.object({
+    code: z.string(),
+    message: z.string(),
+    retry_after_seconds: z.number().int().positive().optional(),
+  }),
 });
 
 export const StreamEventSchema = z.discriminatedUnion('type', [

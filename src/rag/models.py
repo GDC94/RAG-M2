@@ -67,6 +67,7 @@ class QueryResponse(BaseModel):
     sources: list[str] = []
     verification: Verdict | None = None
     timings: dict[str, float] | None = None
+    cached: bool = False
 
 
 class GoldPositive(BaseModel):
