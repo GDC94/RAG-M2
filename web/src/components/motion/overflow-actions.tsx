@@ -325,10 +325,10 @@ function ActionButton({
         title={title}
         onClick={() => onAction(item)}
         className={cn(
-          'inline-flex h-[34px] shrink-0 items-center justify-center gap-1.5 rounded-full font-medium text-sm outline-none',
+          'inline-flex h-[34px] pointer-coarse:h-11 shrink-0 items-center justify-center gap-1.5 rounded-full font-medium text-sm outline-none',
           'disabled:pointer-events-none disabled:opacity-45',
           'focus-visible:ring-2 focus-visible:ring-ring',
-          iconOnly ? 'w-[34px] px-0' : 'px-3',
+          iconOnly ? 'w-[34px] px-0 pointer-coarse:w-11' : 'px-3',
           className,
         )}
       >

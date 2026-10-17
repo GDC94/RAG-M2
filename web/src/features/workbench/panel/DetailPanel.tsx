@@ -17,6 +17,8 @@ export interface DetailPanelProps {
   overflowOpen: boolean;
   compact: boolean;
   wide: boolean;
+  /** Full-screen overlay mode: hides the expand/collapse toggle. */
+  mobile?: boolean;
   /** Replay trigger for this content's fade-in and its `ScoreRing`s/
    * `TimingsGantt` — see `useReplayValue`. */
   animKey: number;
@@ -47,6 +49,7 @@ export function DetailPanel({
   overflowOpen,
   compact,
   wide,
+  mobile = false,
   animKey,
   onActivateTab,
   onCloseTab,
@@ -91,6 +94,7 @@ export function DetailPanel({
         onOverflowOpenChange={onOverflowOpenChange}
         compact={compact}
         wide={wide}
+        hideWideToggle={mobile}
         onActivate={onActivateTab}
         onClose={onCloseTab}
         onOpen={onOpenTab}

@@ -29,7 +29,7 @@ export function ExampleChips({ onSelect, className }: ExampleChipsProps) {
             key={question}
             type="button"
             onClick={() => onSelect(question)}
-            className="inline-flex h-[34px] items-center gap-1.5 rounded-full border border-ink-350 bg-ink-100 px-3.5 text-sm text-fg-muted outline-none transition hover:-translate-y-px hover:border-ink-400 hover:text-fg-strong focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex min-h-[34px] items-center gap-1.5 rounded-full border border-ink-350 bg-ink-100 px-3.5 py-1.5 text-left text-sm pointer-coarse:min-h-11 text-fg-muted outline-none transition hover:-translate-y-px hover:border-ink-400 hover:text-fg-strong focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Sparkles className={cn('size-[13px]', tone.text)} aria-hidden="true" />
             {question}

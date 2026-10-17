@@ -40,7 +40,17 @@ export function WorkbenchContainer({ askFn }: WorkbenchContainerProps) {
     panelOpen: state.panelOpen,
     wide: state.wide,
     sidebarCollapsed: state.sidebarCollapsed,
+    mobileSidebarOpen: state.mobileSidebarOpen,
   });
+
+  // On mobile the sidebar is a drawer with its own open flag; on larger
+  // screens it keeps the desktop collapsed/expanded toggle.
+  const showSidebar = layout.mobile
+    ? () => actions.setMobileSidebarOpen(true)
+    : actions.toggleSidebar;
+  const hideSidebar = layout.mobile
+    ? () => actions.setMobileSidebarOpen(false)
+    : actions.toggleSidebar;
 
   const handleSubmit = () => {
     const question = state.input.trim();
@@ -68,6 +78,7 @@ export function WorkbenchContainer({ askFn }: WorkbenchContainerProps) {
         overflowOpen={state.overflowOpen}
         compact={layout.compactPanel}
         wide={state.wide}
+        mobile={layout.mobile}
         animKey={state.animKey}
         onActivateTab={actions.activateTab}
         onCloseTab={actions.closeTab}
@@ -82,7 +93,9 @@ export function WorkbenchContainer({ askFn }: WorkbenchContainerProps) {
     <WorkbenchLayout
       gridTemplateColumns={layout.gridTemplateColumns}
       sidebarHidden={layout.sidebarHidden}
-      sidebar={<ProjectSidebar onCollapse={actions.toggleSidebar} />}
+      mobile={layout.mobile}
+      onDismissSidebar={hideSidebar}
+      sidebar={<ProjectSidebar onCollapse={hideSidebar} />}
       panel={panel}
       chat={
         <ChatColumn
@@ -95,7 +108,7 @@ export function WorkbenchContainer({ askFn }: WorkbenchContainerProps) {
           onSubmit={handleSubmit}
           onStop={stop}
           sidebarHidden={layout.sidebarHidden}
-          onShowSidebar={actions.toggleSidebar}
+          onShowSidebar={showSidebar}
           panelOpen={state.panelOpen}
           focusedTurnId={state.focusedTurnId}
           citationsOpen={state.citationsOpen}

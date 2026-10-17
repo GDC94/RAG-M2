@@ -16,9 +16,16 @@ export interface PanelHeaderProps {
  * className pattern. */
 export function PanelHeader({ title, subtitle, trailing, className }: PanelHeaderProps) {
   return (
-    <header className={cn('flex flex-col gap-2 border-b border-divider px-9 pt-7 pb-8', className)}>
+    <header
+      className={cn(
+        'flex flex-col gap-2 border-b border-divider px-5 pt-5 pb-6 sm:px-9 sm:pt-7 sm:pb-8',
+        className,
+      )}
+    >
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-3xl font-medium text-fg-strong tracking-[-0.025em]">{title}</h2>
+        <h2 className="text-2xl font-medium sm:text-3xl text-fg-strong tracking-[-0.025em]">
+          {title}
+        </h2>
         {trailing}
       </div>
       <p className="text-base text-fg-subtle">{subtitle}</p>

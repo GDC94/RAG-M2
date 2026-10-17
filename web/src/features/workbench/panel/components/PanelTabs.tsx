@@ -25,6 +25,9 @@ export interface PanelTabsProps {
    * circles — the panel's compact layout (< 600px). */
   compact: boolean;
   wide: boolean;
+  /** Drops the expand/collapse button — meaningless when the panel is a
+   * full-screen overlay (mobile). */
+  hideWideToggle?: boolean;
   onActivate: (key: TabKey) => void;
   onClose: (key: TabKey) => void;
   onOpen: (key: TabKey) => void;
@@ -45,6 +48,7 @@ export function PanelTabs({
   onOverflowOpenChange,
   compact,
   wide,
+  hideWideToggle = false,
   onActivate,
   onClose,
   onOpen,
@@ -100,13 +104,15 @@ export function PanelTabs({
 
       {!overflowOpen && (
         <div className="flex shrink-0 items-center gap-1">
-          <IconButton label={wide ? 'Reducir panel' : 'Expandir panel'} onClick={onToggleWide}>
-            {wide ? (
-              <Minimize2 className="size-[18px]" aria-hidden="true" />
-            ) : (
-              <Maximize2 className="size-[18px]" aria-hidden="true" />
-            )}
-          </IconButton>
+          {!hideWideToggle && (
+            <IconButton label={wide ? 'Reducir panel' : 'Expandir panel'} onClick={onToggleWide}>
+              {wide ? (
+                <Minimize2 className="size-[18px]" aria-hidden="true" />
+              ) : (
+                <Maximize2 className="size-[18px]" aria-hidden="true" />
+              )}
+            </IconButton>
+          )}
           <IconButton label="Cerrar panel" onClick={onClosePanel}>
             <X className="size-[18px]" aria-hidden="true" />
           </IconButton>

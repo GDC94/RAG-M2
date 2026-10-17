@@ -139,4 +139,11 @@ describe('PanelTabs', () => {
     expect(screen.getByText('Detalle')).toBeInTheDocument();
     expect(screen.queryByText('Frag. 19')).not.toBeInTheDocument();
   });
+
+  it('omits the expand/collapse toggle but keeps close when hideWideToggle is set', () => {
+    render(<PanelTabs {...baseProps()} hideWideToggle />);
+
+    expect(screen.queryByRole('button', { name: 'Expandir panel' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cerrar panel' })).toBeInTheDocument();
+  });
 });

@@ -62,7 +62,7 @@ export function FragmentTab({ chunk, onMissing }: FragmentTabProps) {
         }
       />
 
-      <div className="flex max-w-[760px] flex-col gap-[22px] px-9 py-8">
+      <div className="flex max-w-[760px] flex-col gap-[22px] px-5 py-6 sm:px-9 sm:py-8">
         {blocks.map((block, index) => {
           const key = index;
           return block.type === 'ul' ? (

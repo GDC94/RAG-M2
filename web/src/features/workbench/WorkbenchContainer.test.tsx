@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import type { AskResult } from '@/features/ask/api';
 import { WorkbenchContainer } from './WorkbenchContainer';
 
@@ -25,6 +25,10 @@ const successResult: AskResult = {
     timings: { embed: 0.01, search: 0.02, generate: 0.3, total: 0.33 },
   },
 };
+
+function setInnerWidth(width: number) {
+  Object.defineProperty(window, 'innerWidth', { configurable: true, value: width });
+}
 
 describe('WorkbenchContainer', () => {
   it('renders the sidebar and the chat composer', () => {
@@ -159,5 +163,42 @@ describe('WorkbenchContainer', () => {
     expect(pre).not.toBeNull();
     const keySpan = screen.getByText('"user_question"');
     expect(keySpan.className).toContain('text-json-key');
+  });
+
+  describe('on a mobile viewport', () => {
+    const originalWidth = window.innerWidth;
+
+    afterEach(() => setInnerWidth(originalWidth));
+
+    it('starts with the sidebar drawer closed and opens/closes it from the header toggle', async () => {
+      setInnerWidth(390);
+      const user = userEvent.setup();
+      render(<WorkbenchContainer />);
+
+      const show = screen.getByRole('button', { name: 'Mostrar barra lateral' });
+      expect(screen.getByText('Alba RAG').closest('[inert]')).not.toBeNull();
+
+      await user.click(show);
+      expect(screen.getByText('Alba RAG').closest('[inert]')).toBeNull();
+
+      await user.click(screen.getByRole('button', { name: 'Cerrar barra lateral' }));
+      expect(screen.getByText('Alba RAG').closest('[inert]')).not.toBeNull();
+    });
+
+    it('opens the detail panel as an overlay without the expand toggle, and closes it', async () => {
+      setInnerWidth(390);
+      const user = userEvent.setup();
+      render(<WorkbenchContainer askFn={async () => successResult} />);
+
+      await user.type(screen.getByLabelText('Escribí tu pregunta'), '¿Cómo solicito vacaciones?');
+      await user.click(screen.getByRole('button', { name: 'Enviar pregunta' }));
+      await user.click(await screen.findByRole('button', { name: 'Abrir panel de detalle' }));
+
+      expect(screen.getByRole('button', { name: 'Cerrar panel' })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Expandir panel' })).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: 'Cerrar panel' }));
+      expect(screen.queryByRole('button', { name: 'Cerrar panel' })).not.toBeInTheDocument();
+    });
   });
 });

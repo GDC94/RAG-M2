@@ -86,7 +86,7 @@ export function ChatColumn({
           fadeBottom && 'fade-bottom',
         )}
         viewportProps={{ onScroll }}
-        contentClassName="mx-auto flex w-full max-w-[760px] flex-col gap-14 px-6 pt-10 pb-14 text-base"
+        contentClassName="mx-auto flex w-full max-w-[760px] flex-col gap-10 px-4 pt-6 pb-10 text-base sm:gap-14 sm:px-6 sm:pt-10 sm:pb-14"
       >
         {turns.map((turn) => (
           <ChatTurn
@@ -102,7 +102,7 @@ export function ChatColumn({
         ))}
       </MessageScroller>
 
-      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-3 px-6 pt-5 pb-6">
+      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-3 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6 sm:pt-5 sm:pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         {!isBusy && <ExampleChips onSelect={handleExampleSelect} />}
         <Composer
           value={input}

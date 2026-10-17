@@ -20,6 +20,10 @@ export interface WorkbenchState {
   active: TabKey | null;
   overflowOpen: boolean;
   sidebarCollapsed: boolean;
+  /** Mobile-only: whether the sidebar drawer is open. Separate from
+   * `sidebarCollapsed` (a desktop preference) so the drawer starts closed on
+   * phones without collapsing the desktop sidebar. */
+  mobileSidebarOpen: boolean;
   citationsOpen: boolean;
   input: string;
   animKey: number;
@@ -36,6 +40,7 @@ export const initialWorkbenchState: WorkbenchState = {
   active: null,
   overflowOpen: false,
   sidebarCollapsed: false,
+  mobileSidebarOpen: false,
   citationsOpen: true,
   input: '',
   animKey: 0,
@@ -52,6 +57,7 @@ export type WorkbenchAction =
   | { type: 'toggleWide' }
   | { type: 'setOverflowOpen'; open: boolean }
   | { type: 'toggleSidebar' }
+  | { type: 'setMobileSidebarOpen'; open: boolean }
   | { type: 'setCitationsOpen'; open: boolean }
   | { type: 'setInput'; value: string }
   | { type: 'newQuestion' };
@@ -141,6 +147,9 @@ export function workbenchReducer(state: WorkbenchState, action: WorkbenchAction)
 
     case 'toggleSidebar':
       return { ...state, sidebarCollapsed: !state.sidebarCollapsed };
+
+    case 'setMobileSidebarOpen':
+      return { ...state, mobileSidebarOpen: action.open };
 
     case 'setCitationsOpen':
       return { ...state, citationsOpen: action.open };

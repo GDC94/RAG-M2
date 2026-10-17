@@ -12,6 +12,9 @@ const SIDEBAR_WIDTH_PX = 272;
 const CHAT_MIN_WIDTH_PX = 420;
 const PANEL_MIN_WIDTH_PX = 340;
 const PANEL_COMPACT_THRESHOLD_PX = 600;
+/** Below this width the shell is a single column: the sidebar becomes a
+ * drawer and the detail panel a full-screen overlay. */
+const MOBILE_BREAKPOINT_PX = 768;
 
 /** Every tab that could exist for a turn with `chunkCount` retrieved chunks
  * (0..3), in the fixed display order: detail, fragments, json. */
@@ -60,9 +63,13 @@ export interface ComputeLayoutInput {
   panelOpen: boolean;
   wide: boolean;
   sidebarCollapsed: boolean;
+  /** Mobile drawer state; ignored at >= 768px. */
+  mobileSidebarOpen?: boolean;
 }
 
 export interface ComputeLayoutResult {
+  /** Single-column layout (< 768px): sidebar is a drawer, panel an overlay. */
+  mobile: boolean;
   sidebarPx: number;
   sidebarHidden: boolean;
   /** CSS value for the panel's width — a literal formula string, not a
@@ -80,6 +87,8 @@ export interface ComputeLayoutResult {
  * Resolves the 3-column grid (sidebar / chat / detail panel) for a given
  * viewport and panel state.
  *
+ * - Below 768px the grid is a single column; the sidebar is a drawer shown
+ *   only when `mobileSidebarOpen`, and an open panel is a full-width overlay.
  * - The sidebar hides when explicitly collapsed, or whenever the panel is
  *   open on a narrow viewport (< 1280px) or in wide mode — the panel then
  *   needs the room the sidebar would take.
@@ -92,7 +101,20 @@ export function computeLayout({
   panelOpen,
   wide,
   sidebarCollapsed,
+  mobileSidebarOpen = false,
 }: ComputeLayoutInput): ComputeLayoutResult {
+  if (viewportWidth < MOBILE_BREAKPOINT_PX) {
+    return {
+      mobile: true,
+      sidebarPx: 0,
+      sidebarHidden: !mobileSidebarOpen,
+      panelWidth: '100vw',
+      panelWidthPx: panelOpen ? viewportWidth : 0,
+      compactPanel: panelOpen,
+      gridTemplateColumns: 'minmax(0,1fr)',
+    };
+  }
+
   const sidebarHidden = sidebarCollapsed || (panelOpen && (viewportWidth < 1280 || wide));
   const sidebarPx = sidebarHidden ? 0 : SIDEBAR_WIDTH_PX;
 
@@ -115,5 +137,13 @@ export function computeLayout({
   const compactPanel = panelOpen && panelWidthPx < PANEL_COMPACT_THRESHOLD_PX;
   const gridTemplateColumns = `${sidebarPx}px minmax(0,1fr) ${panelWidth}`;
 
-  return { sidebarPx, sidebarHidden, panelWidth, panelWidthPx, compactPanel, gridTemplateColumns };
+  return {
+    mobile: false,
+    sidebarPx,
+    sidebarHidden,
+    panelWidth,
+    panelWidthPx,
+    compactPanel,
+    gridTemplateColumns,
+  };
 }

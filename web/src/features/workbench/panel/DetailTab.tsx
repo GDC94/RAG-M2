@@ -34,7 +34,7 @@ export function DetailTab({ viewModel, animKey, onOpenFragment, onOpenJson }: De
         trailing={<TintTag tone={verdictTone}>{verdictLabel}</TintTag>}
       />
 
-      <div className="flex flex-col gap-10 px-9 py-8">
+      <div className="flex flex-col gap-10 px-5 py-6 sm:px-9 sm:py-8">
         <div className="flex flex-wrap gap-x-11 gap-y-5">
           <MetaItem
             label="Fuente citada"

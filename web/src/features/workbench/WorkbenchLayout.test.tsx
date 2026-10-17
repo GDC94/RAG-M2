@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 import { WorkbenchLayout } from './WorkbenchLayout';
 
 describe('WorkbenchLayout', () => {
@@ -64,5 +65,50 @@ describe('WorkbenchLayout', () => {
     const sidebarColumn = screen.getByText('my-sidebar').parentElement;
     expect(sidebarColumn).not.toHaveAttribute('aria-hidden');
     expect(sidebarColumn).not.toHaveAttribute('inert');
+  });
+
+  describe('mobile', () => {
+    const mobileProps = {
+      gridTemplateColumns: 'minmax(0,1fr)',
+      mobile: true,
+      sidebar: <span>my-sidebar</span>,
+      chat: <span>my-chat</span>,
+    };
+
+    it('renders a backdrop that dismisses the open sidebar drawer', async () => {
+      const user = userEvent.setup();
+      const onDismissSidebar = vi.fn();
+      render(
+        <WorkbenchLayout
+          {...mobileProps}
+          sidebarHidden={false}
+          onDismissSidebar={onDismissSidebar}
+        />,
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Cerrar barra lateral' }));
+
+      expect(onDismissSidebar).toHaveBeenCalledOnce();
+    });
+
+    it('has no backdrop while the drawer is hidden, and keeps it inert', () => {
+      render(<WorkbenchLayout {...mobileProps} sidebarHidden={true} />);
+
+      expect(
+        screen.queryByRole('button', { name: 'Cerrar barra lateral' }),
+      ).not.toBeInTheDocument();
+      expect(screen.getByText('my-sidebar').closest('[inert]')).not.toBeNull();
+    });
+
+    it('shows the panel as a full-screen overlay only when there is one', () => {
+      const { rerender } = render(
+        <WorkbenchLayout {...mobileProps} sidebarHidden={true} panel={<span>my-panel</span>} />,
+      );
+      const sheet = screen.getByText('my-panel').parentElement;
+      expect(sheet).toHaveClass('fixed', 'inset-0');
+
+      rerender(<WorkbenchLayout {...mobileProps} sidebarHidden={true} />);
+      expect(screen.queryByText('my-panel')).not.toBeInTheDocument();
+    });
   });
 });

@@ -15,7 +15,7 @@ export function JsonTab({ data }: JsonTabProps) {
 
   return (
     <div className="h-full overflow-y-auto">
-      <pre className="whitespace-pre-wrap break-words px-9 py-7 font-mono text-sm leading-relaxed">
+      <pre className="whitespace-pre-wrap break-words px-5 py-5 sm:px-9 sm:py-7 font-mono text-sm leading-relaxed">
         {tokens.map((token, index) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: tokens never reorder within a static stringified blob
           <span key={index} className={cn(JSON_TOKEN_CLASSES[token.kind])}>

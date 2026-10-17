@@ -19,6 +19,7 @@ describe('initialWorkbenchState', () => {
       active: null,
       overflowOpen: false,
       sidebarCollapsed: false,
+      mobileSidebarOpen: false,
       citationsOpen: true,
       input: '',
       animKey: 0,
@@ -184,6 +185,16 @@ describe('workbenchReducer / misc toggles', () => {
   it('toggleSidebar flips sidebarCollapsed', () => {
     const state = workbenchReducer(initialWorkbenchState, { type: 'toggleSidebar' });
     expect(state.sidebarCollapsed).toBe(true);
+  });
+
+  it('setMobileSidebarOpen sets the drawer flag, closed by default', () => {
+    expect(initialWorkbenchState.mobileSidebarOpen).toBe(false);
+    const state = workbenchReducer(initialWorkbenchState, {
+      type: 'setMobileSidebarOpen',
+      open: true,
+    });
+    expect(state.mobileSidebarOpen).toBe(true);
+    expect(state.sidebarCollapsed).toBe(false);
   });
 
   it('setCitationsOpen sets the flag directly', () => {

@@ -16,6 +16,7 @@ export interface WorkbenchActions {
   toggleWide: () => void;
   setOverflowOpen: (open: boolean) => void;
   toggleSidebar: () => void;
+  setMobileSidebarOpen: (open: boolean) => void;
   setCitationsOpen: (open: boolean) => void;
   setInput: (value: string) => void;
   newQuestion: () => void;
@@ -38,6 +39,7 @@ export function useWorkbench(): [WorkbenchState, WorkbenchActions] {
       toggleWide: () => dispatch({ type: 'toggleWide' }),
       setOverflowOpen: (open) => dispatch({ type: 'setOverflowOpen', open }),
       toggleSidebar: () => dispatch({ type: 'toggleSidebar' }),
+      setMobileSidebarOpen: (open) => dispatch({ type: 'setMobileSidebarOpen', open }),
       setCitationsOpen: (open) => dispatch({ type: 'setCitationsOpen', open }),
       setInput: (value) => dispatch({ type: 'setInput', value }),
       newQuestion: () => dispatch({ type: 'newQuestion' }),

@@ -210,3 +210,47 @@ describe('computeLayout', () => {
     expect(layout.panelWidthPx).toBeCloseTo(892.8);
   });
 });
+
+describe('computeLayout on mobile (< 768px)', () => {
+  const base = { panelOpen: false, wide: false, sidebarCollapsed: false };
+
+  it('uses a single column and flags mobile', () => {
+    const layout = computeLayout({ ...base, viewportWidth: 390 });
+
+    expect(layout.mobile).toBe(true);
+    expect(layout.gridTemplateColumns).toBe('minmax(0,1fr)');
+    expect(layout.sidebarPx).toBe(0);
+  });
+
+  it('hides the sidebar drawer by default, ignoring sidebarCollapsed', () => {
+    const layout = computeLayout({ ...base, viewportWidth: 390 });
+    expect(layout.sidebarHidden).toBe(true);
+  });
+
+  it('shows the drawer when mobileSidebarOpen is set', () => {
+    const layout = computeLayout({ ...base, viewportWidth: 390, mobileSidebarOpen: true });
+    expect(layout.sidebarHidden).toBe(false);
+    expect(layout.gridTemplateColumns).toBe('minmax(0,1fr)');
+  });
+
+  it('treats the open panel as a full-width compact overlay that never adds a column', () => {
+    const layout = computeLayout({ ...base, viewportWidth: 390, panelOpen: true, wide: true });
+
+    expect(layout.gridTemplateColumns).toBe('minmax(0,1fr)');
+    expect(layout.panelWidthPx).toBe(390);
+    expect(layout.compactPanel).toBe(true);
+  });
+
+  it('is not mobile from 768px up, where the desktop grid applies', () => {
+    const layout = computeLayout({ ...base, viewportWidth: 768 });
+
+    expect(layout.mobile).toBe(false);
+    expect(layout.sidebarHidden).toBe(false);
+    expect(layout.gridTemplateColumns).toBe('272px minmax(0,1fr) 0px');
+  });
+
+  it('keeps the tablet panel open with the chat at >= 420px at 768px', () => {
+    const layout = computeLayout({ ...base, viewportWidth: 768, panelOpen: true });
+    expect(768 - layout.sidebarPx - layout.panelWidthPx).toBeGreaterThanOrEqual(420);
+  });
+});

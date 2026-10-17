@@ -42,6 +42,7 @@ describe('useWorkbench', () => {
       result.current[1].toggleWide();
       result.current[1].setOverflowOpen(true);
       result.current[1].toggleSidebar();
+      result.current[1].setMobileSidebarOpen(true);
       result.current[1].setCitationsOpen(false);
       result.current[1].setInput('hola');
       result.current[1].activateTab('frag-0');
